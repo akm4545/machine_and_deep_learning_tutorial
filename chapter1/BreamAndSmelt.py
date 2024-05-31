@@ -83,4 +83,25 @@ kn.fit(fish_data, fish_target)
 
 kn.score(fish_data, fish_target)
 
+# predict() 메서드는 새로운 데이터의 정답을 예측
+# fit() 메서드와 마찬가지로 리스트의 리스트를 전달해야 한다
+# 도미 = 1, 빙어 = 0 해당 데이터는 1(도미)로 나온다
+kn.predict([[30, 600]])
 
+# 가지고 있는 fish_data 출력
+print(kn._fit_X)
+# 가지고 있는 정답 데이터 출력
+print(kn._Y)
+
+# KNeighborsClassifier 클래스의 데이터 참고 기본값은 5
+
+# 참고 데이터를 49개로 한 kn49 모델
+kn49 = KNeighborsClassifier(n_neighbors=49)
+
+# 가장 가까운 데이터 49개를 사용하는 k-최근접 이웃 모데에 fish_data를 적용하면 fish_data에 있는 모든 생선을 사용하여 예측
+# 49개 중 도미가 35개로 다수를 차지하므로 어떤 데이터를 넣어도 무조건 도미로 예측
+kn49.fit(fish_data, fish_target)
+kn49.score(fish_data, fish_target)
+
+# kn49 모델은 도미만 올바르게 맞히기 떄문에 다음과 같이 정확도를 계산하면 score() 메서드와 같은 값을 얻을 수 있다
+print(35/49)
