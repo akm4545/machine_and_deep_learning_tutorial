@@ -79,7 +79,7 @@ print(index)
 # 렌덤하게 섞은 index 배열을 배열 인덱싱을 사용하여 넘파이 배열 생성
 # 훈련 세트 생성
 train_input = input_arr[index[:35]]
-train_target = input_arr[index[:35]]
+train_target = target_arr[index[:35]]
 
 # 값 검증
 # 섞은 인덱스의 첫번째가 13이므로 
@@ -100,3 +100,18 @@ plt.scatter(test_input[:,0], test_input[:,1])
 plt.xlabel('length')
 plt.ylabel('weight')
 plt.show()
+
+# 새로 만든 훈련 세트와 테스트 세트로 k-최근접 이웃 모델 훈련
+# fit() 호출 시마다 KNeighborsClassifier 클래스의 객체는 이전에 학습한 모든 것을 잃어버린다
+# 이전 모델을 그대로 두고 싶다면 새로 객체를 만들어야 한다
+kn.fit(train_input, train_target)
+
+# 테스트 세트로 테스트
+kn.score(test_input, test_target)
+
+# predict() 메서드로 테스트 세트의 예측 결과와 실제 타깃을 확인
+kn.predict(test_input)
+test_target
+
+# 해당 값은 array()로 감싸여 있다 이 값은 넘파이 배열을 의미한다
+
