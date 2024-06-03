@@ -37,4 +37,5 @@ test_target = fish_target[35:]
 # 훈련
 kn.fit(train_input, train_target)
 # 평가
+# 도미 데이터로만 훈련시켰기 때문에 0.0이 나온다
 kn.score(test_input, test_target)
