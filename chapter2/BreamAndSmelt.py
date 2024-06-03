@@ -19,3 +19,22 @@ from sklearn.neighbors import KNeighborsClassifier
 kn = KNeighborsClassifier()
 
 # 처음 35개는 훈련 세트 나머지 14개는 테스트 세트로 사용
+
+# 슬라이싱 연산으로 배열 추출 
+# :35 = 0 ~ 34번째 인덱스까지 추출
+# 훈련 세트로 입력값 중 0 부터 34번째 인덱스까지 사용
+train_input = fish_data[:35]
+
+# 훈련 세트로 타깃값 중 0부터 34번째 인덱스까지 사용
+train_target = fish_target[:35]
+
+# 테스트 세트로 입려값 중 35번째부터 마지막 인덱스까지 사용
+test_input = fish_data[35:]
+
+# 테스트 세트로 타깃값 중 35번째부터 마지막 인덱스까지 사용
+test_target = fish_target[35:]
+
+# 훈련
+kn.fit(train_input, train_target)
+# 평가
+kn.score(test_input, test_target)
