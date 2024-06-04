@@ -40,3 +40,36 @@ print(fish_target)
 # 데이터가 큰 경우 파이썬 리스트로 작업하는 것은 비효율적 
 # 넘파이 배열은 핵심 부분이 C, C++과 같은 저수준 언어로 개발되어서 빠르고 데이터 과학 분야에 알맞게 최적화되어 있음
 
+# 사이킷런은 머신러닝 모델을 위한 알고리즘뿐만 아니라 다양한 유틸리티 도구도 제공
+# 사이킷런의 train_test_split() 함수를 사용하면 전달되는 리스트나 배열을 비율에 맞게 훈련 세트와 테스트 세트로 나누어 주며 나누기 전에 알아서 섞는다
+
+# train_test_split() 함수는 사이킷런의 model_selection 모듈 아래에 있다
+from sklearn.model_selection import train_test_split
+
+# 나누고 싶은 리스트나 배열을 원하는 만큼 전달하면 된다
+# train_test_split() 함수에는 자체적으로 랜덤 시드를 지정할 수 있는 random_state 매개변수가 있다
+# fish_data와 fish_target 2개의 배열을 전달했으므로 2개씩 나뉘어 입력 데이터, 타깃 데이터 총 4개의 배열이 반환된다
+# 이 함수는 기본적으로 25%를 테스트 세트로 떼어낸다
+train_input, test_input, train_target, test_target = train_test_split(fish_data, fish_target, random_state=42)
+
+# 입력 데이터 검증
+# 2차원 배열
+print(train_input.shape, test_input.shape)
+# 타깃 데이터 검증
+# 1차원 배열 
+# 원소가 하나인 튜플 반환
+print(train_target.shape, test_target.shape)
+
+# 데이터가 잘 섞였는지 검증
+# 해당 데이터는 샘플링 편향이 일어나 빙어가 적다
+print(test_target)
+
+# train_test_split() 함수에 stratify 매개변수로 타깃 데이터를 전달하면 클래스 비율에 맞게 데이터를 나눈다
+# 훈련 데이터가 작거나 특정 클래스의 샘플 개수가 적을 때 유용하다
+
+train_input, test_input, train_target, test_target = train_test_split(
+    fish_data, fish_target, stratify=fish_target, random_state=42
+)
+
+# 샘플링 편향이 사라졌는지 검증
+print(test_target)
