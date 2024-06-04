@@ -24,3 +24,19 @@ fish_data = np.column_stack((fish_length, fish_weight))
 
 # 5개의 데이터 출력하여 검증
 print(fish_data[:5])
+
+# 타깃 데이터를 넘파이를 사용하여 손쉽게 작성
+# np.ones(), np.zeros() 함수를 사용하면 각각 원하는 개수의 1과 0을 채운 배열을 만들어 준다
+print(np.ones(5))
+
+# 이 함수를 사용해 1이 35개인 배열과 0이 14개인 배열을 간단히 만들 수 있다
+# 그 후 두 배열을 그대로 연결하면 된다
+# 첫 번째 차원을 따라 배열을 연결하는 np.concatenate()함수를 사용
+# 연결할 리스트나 배열을 튜플로 전달해야 한다
+fish_target = np.concatenate((np.ones(35), np.zeros(14)))
+
+print(fish_target)
+
+# 데이터가 큰 경우 파이썬 리스트로 작업하는 것은 비효율적 
+# 넘파이 배열은 핵심 부분이 C, C++과 같은 저수준 언어로 개발되어서 빠르고 데이터 과학 분야에 알맞게 최적화되어 있음
+
