@@ -73,3 +73,62 @@ train_input, test_input, train_target, test_target = train_test_split(
 
 # 샘플링 편향이 사라졌는지 검증
 print(test_target)
+
+
+# 넘파이와 train_test_split을 사용하여 만든 데이터 셋으로 훈련
+from sklearn.neighbors import KNeighborsClassifier
+kn = KNeighborsClassifier()
+# 훈련
+kn.fit(train_input, train_target)
+# 검증
+kn.score(test_input, test_target)
+
+# 도미 데이터를 넣고 확인
+# 결과는 빙어로 나온다
+print(kn.predict([[25, 150]]))
+
+# 산점도로 도미 데이터 출력
+import matplotlib.pyplot as plt
+
+# 길이와 무게로 x,y축 지정
+plt.scatter(train_input[:, 0], train_input[: ,1])
+# 이상 데이터를 표시하기 위해 marker 매개변수로 모양 설정
+plt.scatter(25, 150, marker='^')
+plt.xlabel('length')
+plt.ylabel('weight')
+plt.show()
+
+# 이상 데이터 샘플은 도미 데이터 군집에 더 가깝게 그래프가 생성된다
+# 그럼에도 빙어로 출력된다
+
+# k-최근접 이웃은 주변의 샘플 중에서 다수인 클래스를 예측으로 사용한다
+# 주변 샘플 검증을 위해 KNeighborsClassifier에서 kenighbors() 메서드를 사용해 주변 샘플 추출
+
+# kenighbors()
+# 주어진 샘플에서 가장 가까운 이웃을 찾아주는 메서드
+# 이웃까지의 거리와 이웃 샘플의 인덱스를 반환 (배열)
+# KNeighborsClassifier에서 사용하는 이웃 샘플은 기본값이 5다
+
+distances, indexes = kn.kneighbors([[25, 150]])
+
+# 산점도로 이웃 샘플을 알아보기 쉽게 렌더링
+# 전체 데이터
+plt.scatter(train_input[:, 0], train_input[:, 1])
+# 이상 데이터 표시
+plt.scatter(25, 150, marker='^')
+# 정답 데이터 유추로 쓰인 이웃 데이터들 렌더링 및 표시
+plt.scatter(train_input[indexes, 0], train_input[indexes, 1], marker='D')
+plt.xlabel('length')
+plt.ylabel('weight')
+plt.show()
+
+# 결과를 보면 가까운 이웃에 도미가 하나고 나머지 4개가 빙어로 나온다
+
+# 이웃 데이터 출력
+print(train_input[indexes])
+# 이웃 타깃 데이터 출력
+print(train_target[indexes])
+
+# 문제 해결 실마리를 찾기 위해 distances(이웃 샘플간의 거리) 배열을 출력 
+print(distances)
+
