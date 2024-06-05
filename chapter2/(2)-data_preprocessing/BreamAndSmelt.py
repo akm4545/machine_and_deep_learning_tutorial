@@ -182,3 +182,35 @@ print(mean, std)
 # 이런 넘파이 기능을 브로드캐스팅이라고 부른다
 # 브로드 캐스팅은 넘파이 배열 사이에서 일어난다 즉 train_input, mean, std 모두 넘파이 배열이다
 train_scaled = (train_input - mean) / std
+
+# 데이터 전처리를 거친 표준점수로 변환한 train_scaled 산점도 렌더링
+plt.scatter(train_scaled[:, 0], train_scaled[:, 1])
+plt.scatter(25, 150, marker='^')
+plt.xlabel('length')
+plt.ylabel('weight')
+plt.show()
+
+# 이상 데이터는 전처리를 거치기 않았기 때문에 산점도가 이상하게 나온다
+
+# 이상 출력 데이터 전처리
+new = ([25, 150] - mean) / std
+
+plt.scatter(train_scaled[:, 0], train_scaled[:, 1])
+plt.scatter(new[0], new[1], marker='^')
+plt.xlabel('length')
+plt.ylabel('weight')
+plt.show()
+
+# 표준편차로 데이터를 변환하기 전의 산점도와 거의 동일한 산점도가 나온다
+# x, y축의 범위가 바뀌어 두 특성이 비슷한 범위를 차지하고 있다 
+
+# k-최근접 이웃 모델 다시 훈련
+kn.fit(train_scaled, train_target)
+
+# 훈련 세트로 나온 변환 데이터의 평균과 표준편차로 샘플 데이터와 테스트 세트를 변환해야 한다
+
+# 테스트 세트 전처리
+test_scaled = (test_input - mean) / std
+
+# 모델 평가
+kn.score(test_scaled, test_target)
