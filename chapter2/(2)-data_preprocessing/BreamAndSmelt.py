@@ -214,3 +214,19 @@ test_scaled = (test_input - mean) / std
 
 # 모델 평가
 kn.score(test_scaled, test_target)
+
+# 모델 예측 출력
+print(kn.predict([new]))
+
+# 산점도를 그려 검증
+# 데이터를 넣고 주의 이웃들의 거리와 index를 배열로 받는다
+distances, indexes = kn.kneighbors([new])
+# 데이터 전처리를 거친 훈련 셋을 산점도에 표시
+plt.scatter(train_scaled[:, 0], train_scaled[:, 1])
+# 데이터 전처리를 거친 데이터 출력
+plt.scatter(new[0], new[1], marker='^')
+# 주변 이웃들의 데이터를 출력
+plt.scatter(train_scaled[indexes, 0], train_scaled[indexes, 1], marker='D')
+plt.xlabel('length')
+plt.ylabel('weight')
+plt.show()
