@@ -51,3 +51,23 @@ plt.scatter(50, 1033, marker='^')
 plt.xlabel('length')
 plt.ylabel('weight')
 plt.show()
+
+# 산점도를 그리면 50cm는 범위를 벗어나 있다
+
+# 이웃 샘플의 타깃의 평균
+print(np.mean(train_target[indexes]))
+
+# 새로운 샘플이 훈련 세트의 범위를 벗어나면 엉뚱한 값을 예측할 수 있다
+# 예를 들어 50cm가 아닌 100cm의 농어도 여전히 1033g으로 예측한다
+
+print(knr.predict([[100]]))
+
+# 100cm 농어의 산점도
+distances, indexes = knr.kneighbors([[100]])
+
+plt.scatter(train_input, train_target)
+plt.scatter(train_input[indexes], train_target[indexes], marker='D')
+plt.scatter(100, 1033, marker='^')
+plt.xlabel('length')
+plt.ylabel('weight')
+plt.show()
