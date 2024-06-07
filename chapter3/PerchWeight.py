@@ -44,3 +44,28 @@ test_array = np.array([1, 2, 3, 4])
 print(test_array.shape)
 # 1차원 배열 4개의 원소 보유
 # (4, )
+
+# (2, 2) 크기의 2차원 배열로 변환
+# 바꾸려는 배열의 크기를 지정할 수 있다
+# 원본 배열에 있는 원소의 개수와 다르면 에러가 발생한다
+test_array = test_array.reshape(2, 2)
+print(test_array.shape)
+
+# 넘파이는 배열의 크기를 자동으로 지정하는 기능도 제공
+# 크기에 -1을 지정하면 나머지 원소 개수로 모두 채우라는 의미 (원소의 갯수를 몰라도 해당 원소의 갯수만큼 배열을 만들어준다)
+# 원소가 하나인 2차원 배열이 만들어진다 [[a], [b], [c]]
+train_input = train_input.reshape(-1, 1)
+test_input = test_input.reshape(-1, 1)
+print(train_input.shape, test_input.shape)
+
+# 사이킷런에서 k-최근접 이웃 회귀 알고리즘을 구현한 클래스는 KNeighborsRegressor
+# 회귀 모델 훈련
+from sklearn.neighbors import KNeighborsRegressor
+
+knr = KNeighborsRegressor()
+
+# k-최근접 이웃 회귀 모델을 훈련
+knr.fit(train_input, train_target)
+
+# 테스트 세트의 점수 확인
+print(knr.score(test_input, test_target))
