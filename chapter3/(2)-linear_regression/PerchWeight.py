@@ -76,3 +76,47 @@ plt.show()
 # 사실 머신러닝 모델은 한 번 만들고 끝나는 프로그램이 아니다
 # 시간과 환경이 변화하면서 데이터도 바뀌기 떄문에 주기적으로 새로운 훈련 데이터로 모델을 다시 훈련해야 한다
 # 예를 들어 배달 음식이 도착하는 시간을 예측하는 모델은 배달원이 바뀌거나 도로 환경이 변할 수 있기 때문에 새로운 데이터를 사용해 반복적으로 훈련해야한다
+
+# 선형 회귀
+# 비교적 간단하고 성능이 뛰어나서 맨 처음 배우는 머신러닝 알고리즘 중 하나
+# 특성이 하나인 경우 어떤 직선을 학습하는 알고리즘
+
+# 사이킷런은 sklearn.linear_model 패키지 아래에 LinearRegression 클래스로 선형 회귀 알고리즘을 구현
+# 사이킷런의 모델 클래스들은 훈련, 평가, 예측 메서드 이름이 모두 동일
+from sklearn.linear_model import LinearRegression
+
+lr = LinearRegression()
+
+# 선형 회귀 모델을 훈련
+lr.fit(train_input, train_target)
+
+# 50cm 농어에 대해 예측
+print(lr.predict([[50]]))
+# 1241kg 출력
+
+# 선형 회귀가 학습한 직선 출력
+# 하나의 직선을 그리려면 기울기와 절편이 있어야 한다
+# y(농어의 무게) = a * x(농어의 길이) + b
+
+# LinearRegression 클래스가 찾은 a와 b는 lr 객체의 coef_와 intercept_ 속성에 저장되어 있다
+# 머신러닝에서 기울기를 종종 계수(coefficient) 또는 가중치(weight)라고 부른다
+print(lr.coef_, lr.intercept_)
+
+# coef_와 intercept_를 머신러닝 알고리즘이 찾은 값이라는 의미로 모델 파라미터(model parameter)라고 부른다
+# 많은 머신러닝 알고리즘의 훈련 과정은 최적의 모델 파라미터를 찾는 것과 같다 이를 모델 기반 학습이라고 부른다
+# k-최근접 이웃에는 모델 파라미터가 없다 
+# 훈련 세트를 저장하는 것이 훈련의 전부인 학습을 사례 기반 학습이라고 부른다
+
+# 농어의 길이 15 ~ 50 까지 직선으로 렌더링
+# 앞서 구한 기울기와 절편을 사용하여 (15, 15 * 39 - 709)와 (50, 50 * 39 - 709) 두 점을 이은다
+
+# 훈련 세트의 산점도
+plt.scatter(train_input, train_target)
+
+# 15에서 50까지 1차 방정식 그래프를 그린다
+plt.plot([15, 50], [15 * lr.coef_.intercept_, 50 * lr.coef_ + lr.intercept_])
+
+# 50cm 농어 데이터
+plt.scatter(50, 1241.8, marker='^')
+plt.xlabel('length')
+plt.y
