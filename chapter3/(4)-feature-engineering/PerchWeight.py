@@ -102,3 +102,46 @@ test_poly = poly.transform(test_input)
 # PolynomialFeatures 클래스는 fit() 메서드에서 만들 특성의 조합을 준비하기만 하고 별도의 통계 값을 구하지는 않는다
 # 따라서 테스트 세트를 따로 변환해도 된다
 # 항상 훈련 세트를 기준으로 테스트 세트를 변환하는 습관을 들이는 것이 좋다
+
+# 다중 회귀 모델을 훈련하는 것은 선형 회귀 모델을 훈련하는 것과 같다.
+# 여러 개의 특성을 사용하여 선형 회귀를 수행하는 것 뿐이다
+
+# 다중 회귀 모델 훈련
+from sklearn.linear_model import LinearRegression
+
+lr = LinearRegression()
+lr.fit(train_poly, train_target)
+
+print(lr.score(train_poly, train_target))
+# 0.99... 점수가 나온다
+# 특성이 늘어나면 선형 회귀의 능력은 매우 강력해진다
+print(lr.score(test_poly, test_target))
+# 0.97... 
+# 테스트 세트에 대한 점수는 높아지지 않았지만 농어의 길이만 사용했을 때 있던 과소적합 문제는 더 이상 나타나지 않는다
+
+# PolynomialFeatures 클래스의 defree 매개변수를 사용하여 필요한 고차항의 최대 차수를 지정할 수 있다
+# 5 제곱까지 특성을 만들어 출력
+poly = PolynomialFeatures(degree=5, include_bias=False)
+poly.fit(train_input)
+train_poly = poly.transform(train_input)
+test_poly = poly.transform(test_input)
+
+print(train_poly.shape)
+# (42, 55) 만들어진 특성의 개수가 55개가 나온다
+
+# 선형 회귀 모델 훈련
+lr.fit(train_poly, train_target)
+print(lr.score(train_poly, train_target))
+# 0.999999... 
+
+# 테스트 세트 점수 출력
+print(lr.score(test_poly, test_target))
+# -144.40...
+
+# 특성의 개수를 늘리면 선형 모델은 아주 강력해진다
+# 훈련 세트에 대해 거의 완벽하게 학습할 수 있다
+# 하지만 이런 모델은 훈련 세트에 너무 과대적합되므로 테스트 세트에서는 형편없는 점수를 만든다
+
+# 샘플의 개수보다 특성의 개수가 많은 데이터로 훈련하면 완벽하게 학습할 수 있는 것이 당연하다
+# 예를 들어 42개의 참새를 맞추기 위해 딱 한 번 새총을 쏴야 한다면 참새 떼 중앙을 겨냥하여 가능한 한 맞출 가능성을 높여야 한다
+# 하지만 55번이나 쏠 수 있다면 한 번에 하나씩 모든 참새를 맞출 수 있다
