@@ -145,3 +145,90 @@ print(lr.score(test_poly, test_target))
 # 샘플의 개수보다 특성의 개수가 많은 데이터로 훈련하면 완벽하게 학습할 수 있는 것이 당연하다
 # 예를 들어 42개의 참새를 맞추기 위해 딱 한 번 새총을 쏴야 한다면 참새 떼 중앙을 겨냥하여 가능한 한 맞출 가능성을 높여야 한다
 # 하지만 55번이나 쏠 수 있다면 한 번에 하나씩 모든 참새를 맞출 수 있다
+
+# 규제(regularization)
+# 머신러닝 모델이 훈련 세트를 너무 과도하게 학습하지 못하도록 훼방하는 것
+# 모델이 훈련 세트에 과대적합되지 않도록 만드는 것이다
+# 선형 회귀 모델의 경우 특성에 곱해지는 계수(또는 기울기)의 크기를 작게 만드는 일이다
+
+# 특성의 스케일(특성의 범위)가 정규화 되지 않으면 여기에 곱해지는 계수 값도 차이가 나게 된다
+# 일반적으로 선형 회귀 모델에 규제를 적용할 때 계수 값의 크기가 서로 많이 다르면 공정하게 제어되지 않는다
+# 사이킷런의 StandardScaler 클래스는 변환기의 하나로 스케일의 정규화를 도와준다 (평균과 표준편차를 구해 특성을 표준점수로 바꿈)
+
+from sklearn.preprocessing import StandardScaler
+
+ss = StandardScaler()
+# 객체를 훈련
+ss.fit(train_poly)
+
+train_scaled = ss.transform(train_poly)
+test_scaled = ss.transform(test_poly)
+
+# StandardScaler 클래스 객체의 mean_, scale_ 속성에 훈련 세트에서 학습한 평균과 표준편차가 저장
+# 특성마다 계산하므로 위의 예제 코드에서는 55개의 평균과 표준 편차가 들어있다
+
+# 릿지 회귀
+# 선형 회귀 모델에 규제를 추가한 모델을 릿지(ridge)와 라쏘(lasso)라고 부른다
+# 두 모델은 규제를 가하는 방법이 다르다
+# 릿지는 계수를 제곱한 값을 기준으로 규제를 적용하고 라쏘는 계수의 절댓값을 기준으로 규제를 적용
+# 일반적으로 릿지를 조금 더 선호
+# 두 알로리즘 모두 계수의 크기를 줄이지만 라쏘는 아예 0으로 만들 수도 있다 
+
+# 릿지와 라쏘 모두 sklearn.linear_model 패키지 안에 있다
+# 릿지 모델 훈련
+from sklean.linear_model import Ridge
+
+ridge = Ridge()
+ridge.fit(train_scaled, train_target)
+
+# 훈련 세트 점수 출력
+print(ridge.score(train_scaled, train_target))
+# 0.989...
+
+# 테스트 세트 점수 출력
+print(ridge.score(test_scaled, test_target))
+# 0.979...
+
+# 많은 특성을 사용했음에도 불구하고 훈련 세트에 너무 과대적합되지 않아 테스트 세트에서도 좋은 성능을 내고 있다
+
+# 릿지와 라쏘 모델을 사용할 때 규제의 양을 임의로 조절할 수 있다
+# 모델 객체를 만들 때 alpha 매개변수로 규제의 강도를 조절한다 
+# alpha 값이 크면 규제 강도가 세지므로 계수 값을 더 줄이고 조금 더 과소적합되도록 유도
+# alpha 값이 작으면 계수를 줄이는 역할이 줄어들고 선형 회귀 모델과 유사해지므로 과대적합될 가능성이 크다
+
+# 이렇게 머신러닝 모델이 학습할 수 없고 사람이 알려줘야 하는 파라미터를 하이퍼파라미터(hyperparameter)라고 부른다
+# 사이킷런과 같은 머신러닝 라이브러리에서 하이퍼파라미터는 클래스와 메서드의 매개변수로 표현
+
+# 적절한 alpha 값을 찾는 한 가지 방법은 alpha 값에 대한 R² 값의 그래프를 그려 보는 것이다
+# 훈련 세트와 테스트 세트의 점수가 가장 가까운 지점이 최적의 alpha 값이 된다
+
+# 맷플롯립을 입포트 후 alpha 값을 바꿀 때마다 score() 메서드의 결과를 저장할 리스트 생성
+import matplotlib.pyplot as plt
+
+train_score = []
+test_score = []
+
+# alpha 값을 0.001dptj 100까지 10배씩 늘려가며 릿지 회귀 모델을 훈련한 다음 훈련 세트와 테스트 세트의 점수를 파이썬 리스트에 저장
+alpha_list = [0.001, 0.01, 0.1, 1, 10, 100]
+
+for alpha in alpha_list:
+    # 릿지 모델 생성
+    ridge = Ridge(alpha=alpha)
+    # 릿지 모델 훈련
+    ridge.fit(train_scaled, train_target)
+    # 훈련 점수와 테스트 점수 저장
+    train_score.append(ridge.score(train_scaled, train_target))
+    test_score.append(ridge.score(test_scaled, test_target))
+
+# alpha 값을 0.001 부터 10배씩 늘렸기 때문에 이대로 그래프를 그리면 그래프 왼쪽이 너무 촘촘해진다
+# alpha_list에 있는 6개의 값을 동일한 간격으로 나타내기 위해 로그 함수로 바꾸어 지수로 표현해야 한다
+# 즉 0.001은 -3, 0.01은 -2가 되는 식이다
+
+# 넘파이 로그 함수는 np.log() 와 np.log10()이 있다 
+# 전자는 자연 상두 e를 밑으로 하는 자연로그 / 후자는 10을 밑으로 하는 상용로그
+
+plt.plot(np.log10(alpha_list), train_score)
+plt.plot(np.log10(alpha_list), test_score)
+plt.xlabel('alpha')
+plt.ylabel('R^2')
+plt.show()
