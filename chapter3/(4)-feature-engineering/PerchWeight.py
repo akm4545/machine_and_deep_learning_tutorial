@@ -176,7 +176,7 @@ test_scaled = ss.transform(test_poly)
 
 # 릿지와 라쏘 모두 sklearn.linear_model 패키지 안에 있다
 # 릿지 모델 훈련
-from sklean.linear_model import Ridge
+from sklearn.linear_model import Ridge
 
 ridge = Ridge()
 ridge.fit(train_scaled, train_target)
@@ -232,3 +232,78 @@ plt.plot(np.log10(alpha_list), test_score)
 plt.xlabel('alpha')
 plt.ylabel('R^2')
 plt.show()
+
+# 해당 그래프의 결과 중 두 그래프가 가장 가깝고 테스트 세트의 점수가 가장 높은 -1
+# 즉 10ˉ¹ = 0.1이다
+
+# 0.1 alpha 값으로 모델 생성
+ridge = Ridge(alpha=0.1)
+ridge.fit(train_scaled, train_target)
+
+print(ridge.score(train_scaled, train_target))
+# 0.99
+
+print(ridge.score(test_scaled, test_target))
+# 0.98
+
+# 해당 모델은 훈련 세트와 테스트 세트의 점수가 비슷하게 모두 높고 과대적합과 과소적합 사이의 균형을 맞추고 있다
+
+# 라쏘 회귀
+# Ridge 클래스를 Lasso 클래스로 바꾸면 된다
+from sklearn.linear_model import Lasso
+
+lasso = Lasso()
+lasso.fit(train_scaled, train_target)
+
+print(lasso.score(train_scaled, train_target))
+# 0.98
+print(lasso.socre(lasso.score(test_scaled, test_target)))
+# 0.98
+
+# 라쏘 회귀 모델의 alpha 값을 변경하며 점수 계산
+train_score = []
+test_score = []
+alpha_list = [0.001, 0.01, 0.1, 1, 10, 100]
+
+for alpha in alpha_list:
+    # 라쏘 모델 생성
+    lasso = Lasso(alpha=alpha, max_iter=10000)
+    # 라쏘 모델 훈련
+    lasso.fit(train_scaled, train_target)
+    # 훈련 점수와 테스트 점수를 저장
+    train_scaled.append(lasso.score(train_scaled, train_target))
+    test_score.append(lasso.score(test_scaled, test_target))
+
+# 라쏘 모델 훈련시 ConvergenceWarning 경고가 발생할 수 있다
+# 사이킷런의 라쏘 모델은 최적의 계수를 찾기 위해 반복적인 계산을 수행하는데 지정한 반복 횟수가 부족할 때 이런 경고가 발생
+# 이 반복 횟수를 충분히 늘리기 위해 max_iter 매개변수의 값을 10000으로 지정 
+
+# 계산된 점수로 그래프를 렌더링
+# x축은 로그 스케일로 바꿔서 그린다
+plt.plot(np.log10(alpha_list), train_score)
+plt.plot(np.log10(alpha_list), test_score)
+plt.xlabel('alpha')
+plt.ylabel('R^2')
+plt.show()
+
+# 해당 그래프에서 라쏘 모델의 최적의 alpha 값은 1
+# 즉 10¹ = 10 이다
+
+# 최적의 alpha 갑으로 라쏘 모델 훈련
+lasso = Lasso(alpha=10)
+lasso.fit(train_scaled, train_target)
+print(lasso.score(train_scaled, train_target))
+# 0.98
+print(lasso.score(test_scaled, test_target))
+# 0.98
+
+# 라쏘 모델의 계수는 coef_ 속성에 저장
+# np.sum() 함수는 배열을 모두 더한 값을 반환
+# 넘파이 배열에 비교 연산자를 사용했을 때 각 원소는 True 또는 False가 된다 
+# np.sum() 함수는 True를 1로, False가 된다 np.sum() 함수는 True를 1로 False를 0으로 인식하여 덧셈을 할 수 잇기 때문에 
+# 마치 비교 연산자에 맞는 원소 개수를 헤아리는 효과를 낸다
+print(np.sum(lasso.coef_ == 0))
+# 40 출력
+
+# 55개의 특성을 모델에 주입했지만 라쏘 모델이 사용한 특성은 15개밖에 되지 않는다
+# 이런 특징 때문에 라쏘 모델을 유용한 특성을 골라내는 용도로도 사용할 수 있다
