@@ -146,3 +146,47 @@ lr.fit(train_bream_smelt, target_bream_smelt)
 # 예측
 print(lr.predict(train_bream_smelt[:5]))
 ['Bream' 'Smelt' 'Bream' 'Bream' 'Bream']
+
+# KNeighborsClassifier와 마찬가지로 예측 확률은 predict_proba() 메서드에서 제공
+print(lr.predict_proba(train_bream_smelt[:5]))
+# [[0.99759855 0.00240145]
+#  [0.02735183 0.97264817]
+#  [0.99486072 0.00513928]
+#  [0.98584202 0.01415798]
+#  [0.99767269 0.00232731]]
+
+# 첫 번째 열이 음성 클래스(0)에 대한 확률이고 두 번째 열이 양성 클래스(1)에 대한 확률
+
+# k-최근접 이웃 분류기에서 처럼 사이킷런은 타깃값을 알파벳순으로 정렬
+# classes_ 속성에서 확인
+print(lr.classes_)
+# ['Bream' 'Smelt']
+# 빙어(Smelt)가 양성 클래스다 
+# 만약 도미(Bream)을 양성 클래스로 사용하고 싶다면 Bream의 타깃값을 1로 만들고 나머지 타깃값은 0으로 만들어 사용하면 된다
+
+# 로지스틱 회귀가 학습한 계수 확인
+print(lr.coef_, lr.intercept_)
+# [[-0.4037798  -0.57620209 -0.66280298 -1.01290277 -0.73168947]] [-2.16155132]
+# 로지스틱 회귀 모델이 학습한 방정식
+# # z = -0.404 * (Weight) - 0.576 * (Length) - 0.663 * (Diagonal) - 1.013 * (Height) - 0.732 * (Width) - 2.161
+
+# LogisticRegression 클래스의 decision_function() 메서드로 z값 출력
+# train_bream_smelt의 처음 5개 샘플의 z값 출력
+decisions = lr.decision_function(train_bream_smelt[:5])
+print(decisions)
+# [-6.02927744  3.57123907 -5.26568906 -4.24321775 -6.0607117 ]
+
+# 이 z값을 시그모이드 함수에 통과시키면 확률을 얻을 수 있다
+# 파이썬의 사이파이(scipy)라이브러리에도 시그모이드 함수 expit()가 있다 
+# np.exp() 함수를 사용해 분수 계산을 하는 것보다 훨씬 편리하고 안전하다
+
+# decisions 배열의 값을 확률로 변환
+from scipy.special import expit
+print(expit(decisions))
+# [0.00240145 0.97264817 0.00513928 0.01415798 0.00232731]
+# predict_proba() 메서드 출력의 두 번째 열의 값과 동일
+# decision_function() 메서드는 양성 클래스에 대한 z값을 반환
+
+# 이진 분류일 경우 predict_proba() 메서드는 음성 클래스와 양성 클래스에 대한 확률을 출력
+# decision_function() 메서드는 양성 클래스에 대한 z값을 계산
+# coef_ 속성과 intercept_ 속성에는 로지스틱 모델이 학습한 선형 방정식의 계수가 들어 있다
