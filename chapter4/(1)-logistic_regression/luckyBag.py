@@ -190,3 +190,55 @@ print(expit(decisions))
 # 이진 분류일 경우 predict_proba() 메서드는 음성 클래스와 양성 클래스에 대한 확률을 출력
 # decision_function() 메서드는 양성 클래스에 대한 z값을 계산
 # coef_ 속성과 intercept_ 속성에는 로지스틱 모델이 학습한 선형 방정식의 계수가 들어 있다
+
+# LogisticRegression 클래스를 사용해 다중 분류 수행
+# LogisticRegression 클래스는 기본적으로 반복적인 알고리즘을 사용 
+# max_iter 매개변수에서 반복 횟수를 지정하며 기본값은 100
+
+# LogisticRegression은 기본적으로 릿지 회귀와 같이 계수의 제곱을 규제한다
+# 이런 규제는 L2 규제라고도 부른다
+# 릿지 회귀에서는 alpha 매개변수로 규제의 양을 조절했다 
+# alpha 값이 커지면 규제도 커진다
+# LogisticRegression에서 규제를 제어하는 매개변수는 C이다 
+# 하지만 C는 alpha와 반대로 작을수록 규제가 커진다 
+# C의 기본값은 1
+
+# 로지스틱 회귀 모델 훈련
+# 규제 = 20 / 반복 1000
+lr = LogisticRegression(C=20, max_iter=1000)
+lr.fit(train_scaled, train_target)
+
+print(lr.score(train_scaled, train_target))
+# 0.93
+print(lr.score(test_scaled, test_target))
+# 0.92
+# 모두 점수가 높고 과대적합이나 과소적합으로 치우치지 않았다
+
+# 샘플 예측 출력
+print(lr.predict(test_scaled[:5]))
+# ['Perch' 'Smelt' 'Pike' 'Roach' 'Perch']
+
+# 샘플 5개에 대한 예측 확률 출력
+# 소수점 네 번째 자리에서 반올림
+proba = lr.predict_proba(test_scaled[:5])
+print(lr.classes_)
+print(np.round(proba, decimals=3))
+
+# 5개의 샘플에 7개의 생선에 대한 확률 계산
+# ['Bream' 'Parkki' 'Perch' 'Pike' 'Roach' 'Smelt' 'Whitefish']
+# [[0.    0.014 0.841 0.    0.136 0.007 0.003]
+#  [0.    0.003 0.044 0.    0.007 0.946 0.   ]
+#  [0.    0.    0.034 0.935 0.015 0.016 0.   ]
+#  [0.011 0.034 0.306 0.007 0.567 0.    0.076]
+#  [0.    0.    0.904 0.002 0.089 0.002 0.001]]
+
+# 다중 분류의 선형 방정식
+print(lr.coef_.shape, lr.intercept_.shape)
+# (7, 5) (7,)
+# 해당 데이터는 5개의 특성을 사용하므로 coef_배열의 열은 5개다 그런데 행이 7이고 intercept_도 7개다
+# 이진 분류에서 보았던 z를 7개나 계산한다는 의미이다
+# 다중 분류는 클래스마다 z값을 하나씩 계산한다
+# 가장 높은 z 값을 출력하는 클래스가 예측 클래스가 된다
+
+# 이진 분류에서는 시그모이드 함수를 사용해 z를 0과 1사이의 값으로 변환했다
+# 다중 분류는 이와 달리 소프트맥스(softmax) 함수를 사용하여 7개의 z 값을 확률로 변환한다
