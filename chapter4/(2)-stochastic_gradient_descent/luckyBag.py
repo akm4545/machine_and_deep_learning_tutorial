@@ -161,3 +161,89 @@ print(sc.score(train_scaled, train_target))
 print(sc.score(test_scaled, test_target))
 # 0.775
 
+# 확률적 경사 하강법은 점진적 합습이 가능하다
+# SGDClassifier 객체를 다시 만들지 않고 훈련한 모델 sc를 추가로 더 훈련
+# 모델을 이어서 훈련할 때는 partial_fit() 메서드 사용
+# fit() 메서드와 사용법이 같지만 호출할 때마다 1에포크씩 이어서 훈련 가능
+
+sc.partial_fit(train_scaled, train_target)
+
+print(sc.score(train_scaled, train_target))
+# 0.8151260504201681
+print(sc.score(test_scaled, test_target))
+# 0.85
+
+# SGDClassifier는 미니배치 경사 하강법이나 배치 하강법을 제공하지 않는다
+
+# 확률적 경사 하강법을 사용한 모델은 에포크 횟수에 따라 과소적합이나 과대적합이 될 수 있다
+
+# 에포크 횟수가 적으면 모델이 훈련 세트를 덜 학습한다
+# 마치 산을 다 내려오지 못하고 훈련을 마치는 셈이다 
+# 에포크 횟수가 충분히 많으면 훈련 세트를 완전히 학습할 것이다 
+# 훈련 세트에 아주 잘 맞는 모델이 만들어진다
+
+# 적은 에포크 횟수로 훈련한 모델은 훈련 세트와 테스트 세트에 잘 맞지 않는 과소적합된 모델일 가능성이 높다
+# 반대로 많은 에포크 횟수 동안에 훈련한 모델은 훈련 세트에 너무 잘 맞아 테스트 세트에는 오히려 점수가 나쁜 과대적합된 모델일 가능성이 높다
+
+# 훈련 세트 점수는 에포크가 진행될수록 꾸준히 증가하지만 테스트 세트 점수는 어느 순간 감소하기 시작한다
+# 이 구간이 모델이 과대적합되기 시작하는 곳이다
+
+# 과대적합이 시간하기 전에 훈련을 멈추는 것을 조기 종료(early sopping)이라고 한다 
+
+# partial_fit() 메서드를 사용하여 에포크 그래프 만들기
+import numpy as np
+
+sc = SGDClassifier(loss='log_loss', random_state=42)
+
+train_score = []
+test_score = []
+
+# 종을 중복을 제거하여 추출
+classes = np.unique(train_target)
+
+# 300번의 에포크 동안 훈련 반복
+# 에포그 반복 횟수에 대한 점수를 출력하기 위해 기존 훈련 정보를 남겨놓는 partial_fit으로 훈련
+# _는 버리는 변수 여기서는 반복 횟수를 임시 저장하기 위한 용도로 사용
+for _ in range(0, 300):
+    sc.partial_fit(train_scaled, train_target, classes=classes)
+
+    train_score.append(sc.score(train_scaled, train_target))
+    test_score.append(sc.score(test_scaled, test_target))
+
+# 300번의 에포크 반복 후 점수를 그래프로 변환
+import matplotlib.pyplot as plt
+
+plt.plot(train_score)
+plt.plot(test_score)
+plt.xlabel('epoch')
+plt.ylabel('accuracy')
+plt.show()
+
+# 그래프를 출력해보면 백 번째 에포크 이후에는 훈련 세트와 테스트 세트의 점수가 조금씩 벌어진다
+# 에포크 초기에는 과소적합되어 훈련 세트와 테스트 세트의 점수가 낮다
+# 이 모델의 적정 에포크 횟수는 100회로 보인다
+
+# SGDClassifier는 일정 에포크 동안 성능이 향상되지 않으면 더 훈련하지 않고 자동으로 멈춘ㄴ다
+# tol 매개변수에서 향상될 최솟값을 지정 None으로 지정하면 자동으로 멈추지 않는다
+sc = SGDClassifier(loss='log_loss', max_iter=100, tol=None, random_state=42)
+sc.fit(train_input, train_target)
+
+print(sc.score(train_scaled, train_target))
+# 0.957983193277311
+print(sc.score(test_scaled, test_target))
+# 0.925
+
+# 회귀 모델에서 확률적 경사 하강법을 사용한 모델 = SGDRegressor
+
+# SGDClassifier의 loss 매개변수 기본값은 hinge다 
+# 힌지 손실(hinge loss)은 서포트 벡터 머신(support vector machine)이라 불리는 또 다른 머신러닝 알고리즘을 위한 손실 함수이다
+# 서포트 벡터 머신은 널리 사용하는 머신러닝 알고리즘 중 하나이다
+
+# 힌지 손실을 사용해 훈련 예시
+sc = SGDClassifier(loss='hinge', max_iter=100, tol=None, random_state=42)
+sc.fit(train_scaled, train_target)
+
+print(sc.score(train_scaled, train_target))
+# 0.9495798319327731
+print(sc.score(test_scaled, test_target))
+# 0.925
