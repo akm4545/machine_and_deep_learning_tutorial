@@ -115,3 +115,49 @@
 # 또는 평균 제곱 오차(mean squared error)를 많이 사용한다 
 # 타깃에서 예측을 뺀 값을 제곱한 다음 모든 샘플에 평균한 값이다 
 # 이 값이 작을수록 좋은 모델이다
+
+# 머신러닝 라이브러리를 활용한 손실 함수 계산
+# 판다스 데이터프레임 생성
+import pandas as pd
+
+fish = pd.read_csv('https://bit.ly/fish_csv_data')
+
+# Species열을 제외한 5개의 데이터를 입력 데이터로 가공 
+# Species 열은 타깃 데이터로 사용
+fish_input = fish[['Weight', 'Length', 'Diagonal', 'Height', 'Width']].to_numpy()
+fish_target = fish['Species'].to_numpy()
+
+# train_test_split() 함수로 훈련 세트와 테스트 세트 생성
+from sklearn.model_selection import train_test_split
+
+train_input, test_input, train_target, test_target = train_test_split(
+    fish_input, fish_target, random_state=42)
+
+# 훈련 세트와 테스트 세트의 특성을 표준화 전처리
+# 훈련 세트에서 학습한 통계 값으로 테스트 세트도 변환해야 한다
+from sklearn.preprocessing import StandardScaler
+
+ss = StandardScaler()
+ss.fit(train_input)
+
+train_scaled = ss.transfrom(train_input)
+test_scaled = ss.transfrom(test_input)
+
+# 확률적 경사 하강법을 제공하는 대표적인 분류용 클래스는 SGDClassifier이다
+from sklearn.linear_model import SGDClassifier
+
+# SGDClassifier 객체를 생성 시 2개의 매개변수를 지정한다
+# loss는 손실 함수의 종류를 기정한다 여기서는 loss='log_loss'를 입력하여 로지스틱 손실 함수 지정
+# max_iter는 수행할 에포크 횟수를 지정 여기서는 10으로 지정하여 전체 훈련 세트를 10회 반복
+
+# 다중 분류일 경우 SGDClassifier에 loss='log_loss'로 지정하면 클래스마다 이진 분류 모델을 만든다
+# 즉 도미는 양성 클래스로 두고 나머지를 모두 음성 클래스로 두는 방식 이런 방식을 OvR(One versus Rest)이라고 부른다
+
+sc = SGDClassifier(loss='log_loss', max_iter=10, random_state=42)
+sc.fit(train_scaled, train_target)
+
+print(sc.score(train_scaled, train_target))
+# 0.773109243697479
+print(sc.score(test_scaled, test_target))
+# 0.775
+
