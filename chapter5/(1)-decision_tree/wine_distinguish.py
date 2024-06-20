@@ -102,3 +102,69 @@ print(lr.score(test_scaled, test_target))
 # 이 문제를 해결하기 위해 규제 매개변수 C의 값을 바꿀수도 있고 solver 매개변수에서 다른 알고리즘을 선택할 수도 있다
 # 또는 다항 특성을 만들어 추가할 수도 있다
 
+# 로지스틱 회귀가 학습한 계수와 절편을 출력
+print(lr.coef_, lr.intercept_)
+
+# [[ 0.51270274  1.6733911  -0.68767781]] [1.81777902]
+
+# 결정트리
+# 결정 트리 모델은 스무고개와 같다 
+# 질문을 하나씩 던져서 정답과 맞춰간다
+# 데이터를 잘 나눌 수 있는 질문을 찾는다면 계속 질문을 추가해서 분류 정확도를 높일 수 있다
+
+# 사이킷런의 DecisionTreeClassifier 클래스를 사용해 결정 트리 모델을 사용할 수 있다
+# 사이킷런의 결정 트리 알고리즘은 노드에서 최적의 분할을 찾기 전에 특성의 순서를 섞는다
+# 따라서 약간의 무작위성이 주입되는데 실행할 때마다 점수가 조금씩 달라질 수 있기 때문이다
+# 실전에서는 필요하지 않다
+
+from sklearn.tree import DecisionTreeClassifier
+
+dt = DecisionTreeClassifier(random_state=42)
+dt.fit(train_scaled, train_target)
+
+print(dt.score(train_scaled, train_target))
+# 0.996921300750433
+print(dt.score(test_scaled, test_target))
+# 0.8592307692307692
+
+# 훈련세트는 점수가 매우 높지만 테스트 세트의 성능은 그에 비해 조금 낮다
+# 과대적합된 모델이다 
+
+# 이 모델을 그림으로 표현하려면 plot_tree() 함수를 사용하면 된다
+import matplotlib.pyplot as plt
+from sklearn.tree import plot_tree
+
+plt.figure(figsize=(10, 7))
+plot_tree(dt)
+plt.show()
+
+# 노드는 결정 트리를 구성하는 핵심 요소이다 
+# 노드는 훈련 데이터의 특성에 대한 테스트를 표현한다
+# 예를들어 현재 샘플의 당도가 -0.239보다 작거나 같은지 테스트한다 
+# 가지(branch)는 테스트의 결과(True, False)를 나타내며 일반적으로 하나의 노드는 2개의 가지를 가진다
+# 걀정 트리의 맨 위 노드를 루트노드라 부르고 맨 아래 끝에 달린 노드를 리프 노드라 한다
+
+# plot_tree() 함수에서 
+# max_depth 매개변수를 1로 주면 루트 노드를 제외하고 하나의 노드를 더 확장하여 그린다
+# filed 매개변수에서 클래스에 맞게 노드의 색을 칠할 수 있다
+# feature_names 매개변수에는 특성의 이름을 전달할 수 있다
+
+plt.figure(figsize=(10, 7))
+plot_tree(dt, max_depth=1, filled=True, feature_names=['alcohol', 'suger', 'pH'])
+plt.show()
+
+# 루트 노드는 당도(sugar)가 -0.239 이하인지 질문한다
+# 만약 어떤 샘플의 당도가 -0.239와 같거나 작으면 왼쪽 가지로 간다 그렇지 않으면 오른쪽 가지로 간다
+# 즉 왼쪽이 Yes, 오른쪽이 No다 
+# 루트 노드의 총 샘플 수(samples)는 5197개이다 
+# 이 중에서 음성 클래스(레드 와인)는 1258개이고 양성 클래스(화이트 와인)는 3939개이다
+# 이 값이 value에 나타나 있다
+
+# 결정 트리에서 예측하는 방법은 간단하다
+# 리프 노드에서 가장 많은 클래스가 예측 클래스가 된다 
+# k-최근접 이웃과 매우 비슷하다
+
+# 만약 결정 트리를 회귀 문제에 적용하면 리프 노드에 도달한 샘플의 타깃을 평균하여 
+# 예측값으로 사용 
+# 사이킷런의 결정 트리 회귀 모델은 DecisionTreeRegressor이다
+
