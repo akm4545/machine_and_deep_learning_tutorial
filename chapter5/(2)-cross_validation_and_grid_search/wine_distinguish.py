@@ -140,10 +140,87 @@ print(np.mean(scores['test_score']))
 # max_depth의 최적값은 min_sample_split 매개변수의 값이 바뀌면 함께 달라진다
 # 즉 이 두 매개변수를 동시에 바꿔가며 최적의 값을 찾아야 한다
 
-# 게다가 매개변수가 많아지면 문제는 더 복잡해진다 
-# 파이썬의 for 반복문으로 이런 과정을 직접 구현할 수도 있지만 
+# 게다가 매개변수가 많아지면 문제는 더 복잡해진다
+# 파이썬의 for 반복문으로 이런 과정을 직접 구현할 수도 있지만
 # 사이킷런에서 제공하는 그리드 서치(Grid Search)를 사용한다
 
+# 사이킷런의 GridSearchCV 클래스는 친절하게도 하이퍼파라미터 탐색과 교차 검증을 한 번에 수행한다
+# 별도로 cross_validate() 함수를 호출할 필요가 없다
 
+# 어떻게 사용하는지 간단한 예
+# 기본 매개변수를 사용한 결정 트리 모델에서 min_impurity_decrease 매개변수의 최적값 찾기
+# 먼저 GridSearchCV 클래스를 임포트하고 탐색할 매개변수와 탐색할 값의 리스트를 딕셔너리로 만든다
+from sklearn.model_selection import GridSearchCV
 
+# 0.0001 부터 0.0005까지 0.0001씩 증가하는 5개의 값을 시도
+prams = {'min_impurity_decrease': [0.0001, 0.0002, 0.0003, 0.0004, 0.0005]}
+# 결정 트리 클래스의 객체를 생성하자마자 바로 전달
+gs = GridSearchCV(DecisionTreeClassifier(random_state=42), prams, n_jobs= -1)
+
+# 일반 모델을 훈련하는 것처럼 gs 객체에 fit() 메서드를 호출한다
+# 이 메서드를 호출하면 그리드 서치 객체는 결정 트리 모델 min_impurity_decrease 값을 바꿔가며 총 5번 실행한다
+
+# GridSearchCV의 cv 매개변수 기본값은 5이다
+# 따라서 min_impurity_decrease 값마다 5-폴드 교차 검증을 수행한다
+# 결국 5 * 5 = 25개의 모델을 훈련한다
+# 많은 모델을 훈련하기 때문에 GridSearchCV 클래스의 n_jobs 매개변수에서 병렬 실행에 사용할 CPU 코어 수를 지정하는 것이 좋다
+# 이 매개변수의 기본값은 1이다 
+# -1로 지정하면 시스템에 있는 모든 코어를 사용한다
+
+gs.fit(train_input, train_target)
+
+# 교차 검증에서 최적의 하이퍼파라미터를 찾으면 전체 훈련 세트로 모델을 다시 만들어야 하지만 
+# 사이킷런의 그리드 서치는 훈련이 끝나면 25개의 모델 중에서 검증 점수가 가장 높은 모델의 매개변수 조합으로
+# 전체 훈련 세트에서 자동으로 다시 모델을 훈련한다
+
+# 이 모델은 gs 객체의 best_estimator_ 속성에 저장되어 있다
+# 이 모델을 일반 결정 트리처럼 똑같이 사용할 수 있다
+dt = gs.best_estimator_
+print(dt.score(train_input, train_target))
+# 0.9615162593804117
+
+# 그리드 서치로 찾은 최적의 매개변수는 best_params_ 속성에 저장되어 있다
+print(gs.best_params_)
+# {'min_impurity_decrease': 0.0001}
+
+# 각 매개변수에서 수행한 교차 검증의 평균 점수는 cv_results_ 속성의 mean_test_score키에 저장되어 있다
+# 5번의 교차 검증으로 얻은 점수를 출력
+print(gs.cv_results_['mean_test_score'])
+# [0.86819297 0.86453617 0.86492226 0.86780891 0.86761605]
+
+# 가장 큰 값의 인덱스를 넘파이 argmax()함수로 추출하고 이 인덱스를 사용해 prams 키에 저장된 매개변수를 출력할 수 있다
+# 이 값이 최상의 검증 점수를 만든 매개변수 조합이다
+best_index = np.argmax(gs.cv_results_['mean_test_score'])
+print(gs.cv_results_['params'][best_index])
+# {'min_impurity_decrease': 0.0001}
+
+# 이 과정을 정리하면 다음과 같다
+# 1. 탐색할 매개변수를 지정
+# 2. 훈련 세트에서 그리드 서치를 수행하여 최상의 평균 검증 점수가 나오는 매개변수 조합을 찾는다
+# 이 조합은 그리드 서치 객체에 저장
+# 3. 그리드 서치는 최상의 매개변수에서 (교차 검증에 사용한 훈련 세트가 아니라) 전체 훈련 세트를 
+# 사용해 최종 모델을 훈련. 이 모델도 그리드 서치 객체에 저장
+
+# 결정 트리에서 min_impurity_decrease는 노드를 분할하기 위한 불순도 감소 최소량을 지정
+# 여기에다가 max_depth로 트리의 깊이를 제한하고 min_sample_split으로 노드를 나누기 위한 최소 샘플 수도 추출
+params = {'min_impurity_decrease': np.arange(0.0001, 0.001, 0.0001), #넘파이 arange() 함수는
+# 첫 번째 매개변수에서 두 번째 매개변수에 도달할때까지 세 번째 매개변수를 계속 더한 배열 생성
+          'max_depth': range(5, 20, 1), #파이썬 range는 정수만 사용 가능
+          'min_samples_split': range(2, 100, 10)
+        }
+
+# 따라서 이 매개변수로 수행할 교차 검증 횟수는 9 * 15 * 10 = 1350개이다
+# 기본 5폴드 교차검증을 수행하므로 만들어지는 모델의 수는 6750개다 
+# cpu를 전부 사용하기 위해 n_jobs를 -1로 지정해서 그리드 서치 진행
+gs = GridSearchCV(DecisionTreeClassifier(random_state=42), params, n_jobs= -1)
+gs.fit(train_input, train_target)
+
+# 최상의 매개변수 조합 확인
+print(gs.best_params_)
+# {'max_depth': 14, 'min_impurity_decrease': 0.0004, 'min_samples_split': 12}
+
+# 최상의 교차 검증 점수 확인
+print(np.max(gs.cv_results_['mean_test_score']))
+
+# 랜덤 서치
 
