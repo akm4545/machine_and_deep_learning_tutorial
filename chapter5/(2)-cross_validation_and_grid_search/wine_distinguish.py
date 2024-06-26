@@ -223,4 +223,73 @@ print(gs.best_params_)
 print(np.max(gs.cv_results_['mean_test_score']))
 
 # 랜덤 서치
+# 매개변수의 값이 수치일 때 값의 범위나 간격을 미리 정하기 어려울 수 있다
+# 너무 많은 매개 변수 조건이 있어 그리드 서치 수행 시간이 오래 걸릴 수 있다
+# 이럴 때 랜덤 서치(Random Search)를 사용하면 좋다
 
+# 핸덤 서치에는 매개변수 값의 목록을 전달하는 것이 아니라 매개변수를 샘플링할 수 있는 확률 분포
+# 객체를 전달한다
+
+# 싸이파이(scipy)
+# 파이썬의 핵심 과학 라이브러리 중 하나
+# 적분, 보간, 선형 대수, 확률 등을 포함한 수치 계산 전용 라이브러리
+# 사이킷런은 넘파이와 싸이파이 기능을 많이 사용한다
+from scipy.stats import uniform, randint
+
+# 싸이파이의 stats 서브 패키지에 있는 uniform과 randint 클래스는 모두 주어진 범위에서 고르게 값을 뽑는다
+# 이를 균등 분포에서 샘플링한다 라고 말한다
+# randint는 정숫값을 뽑고 uniform은 실숫값을 뽑는다
+# 사용법은 같다
+
+# 10개의 숫자 샘플링
+rgen = randint(0,10)
+rgen.rvs(10)
+# array([0, 9, 2, 6, 3, 4, 0, 1, 3, 5])
+
+# 1000개를 샘플링해서 각 숫자의 개수를 출력
+np.unique(rgen.rvs(1000), return_counts=True)
+# (array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]),
+#  array([102, 101,  84,  95, 102,  90,  97, 100, 116, 113]))
+# 숫자가 어느 정도 고르게 추출된다
+
+# uniform 클래스로 0~1 사이의 10개 실수 추출
+ugen = uniform(0, 1)
+ugen.rvs(10)
+# array([0.26597489, 0.1488865 , 0.72663052, 0.67215681, 0.9631752 ,
+#        0.69133256, 0.04281637, 0.60542112, 0.62241722, 0.90843272])
+
+# 랜덤 서치에 randint과 uniform 클래스 객체를 넘겨주고 총 몇 번을 샘플링해서 최적의 매개변수를 찾으라고 명령할 수 있다
+# 샘플링 횟수는 시스템 자원이 허락하는 범위 내에서 최대한 크게 하는 것이 좋다
+
+# 탐색할 매개변수의 딕셔너리를 만드는데 여기에서 min_samples_leaf 매개변수를 탐색 대상에 추가
+# 이 매개변수는 리프 노드가 되기 위한 최소 샘플의 개수이다
+# 어떤 노드가 분할하여 만들어질 자식 노드의 샘플 수가 이 값보다 작을 경우 분할하지 않는다
+params = {'min_impurity_decrease': uniform(0.0001, 0.001),
+          'max_depth': randint(20, 50),
+          'min_samples_split': randint(2, 25),
+          'min_samples_leaf': randint(1, 25),
+}
+
+# 샘플링 횟수는 사이킷런의 랜덤 서치 클래스인 RandomizedSearchCV의 n_iter 매개변수에 지정
+from sklearn.model_selection import RandomizedSearchCV
+
+gs = RandomizedSearchCV(DecisionTreeClassifier(random_state=42), params, n_iter=100, n_jobs=-1, random_state=42)
+gs.fit(train_input, train_target)
+
+# 총 100번(n_iter 매개변수)을 샘플링하여 교차 검증을 수행하고 최적의 매개변수 조합을 찾는다
+# 앞서 그리드 서치보다 훨씬 교차 검증 수를 줄이면서 넓은 영역을 효과적으로 탐색할 수 있다
+
+# 최적의 매개변수 조합 출력
+print(gs.best_params_)
+# {'max_depth': 39, 'min_impurity_decrease': 0.00034102546602601173, 'min_samples_leaf': 7, 'min_samples_split': 13}
+
+# 교차검증 점수 출력
+print(np.max(gs.cv_results_['mean_test_score']))
+# 0.8695428296438884
+
+# 최적의 모델을 최종 모델로 결정하고 테스트 세트의 성능 확인
+dt = gs.best_estimator_
+print(dt.score(test_input, test_target))
+# 0.86
+
+# 테스트 세트 점수는 검증 세트에 대한 점수보다 조금 작은 것이 일반적이다
