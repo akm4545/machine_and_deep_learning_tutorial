@@ -84,3 +84,31 @@ from sklearn.model_selection import cross_validate
 
 scores = cross_validate(dt, train_input, train_target)
 print(scores)
+
+# {'fit_time': array([0.03056216, 0.01651955, 0.01126099, 0.01042104, 0.01005459]), 
+# 'score_time': array([0.00607395, 0.00175476, 0.00167656, 0.00151825, 0.00156927]), 
+# 'test_score': array([0.86923077, 0.84615385, 0.87680462, 0.84889317, 0.83541867])}
+
+# 교차 검증의 최종 점수는 test_score 키에 담긴 5개의 점수를 평균하여 얻을 수 있다
+# 이름은 test_score지만 검증 폴드의 점수이다 
+import numpy as np
+
+print(np.mean(scores['test_score']))
+# 0.855300214703487
+
+# 교차 검증을 수행하면 입력한 모델에서 얻을 수 있는 최상의 검증 점수를 가늠해 볼 수 있다.
+
+# 한 가지 주의할 점은 cross_validate()는 훈련 세트를 섞어 폴드를 나누지 않는다
+# 앞서 train_test_split() 함수로 전체 데이터를 섞은 후 훈련 세트를 준비했기 때문에 따로 섞을 필요가 없다
+# 만약 교차 검증을 할 때 훈련 세트를 섞으려면 분할기(splitter)를 지정해야 한다
+
+# 사이킷런의 분할기는 교차 검증에서 폴드를 어떻게 나눌지 결정해 준다
+# cross_validate() 함수는 기본적으로 회귀 모델일 경우 KFold 분할기를 사용하고 분류 모델일 경우 타깃 클래스를 고루 나누기 위해
+# StraifiedKFold를 사용한다
+
+# 즉 앞서 수행한 교차 검증은 다음 코드와 동일
+from sklearn.model_selection import StratifiedKFold
+
+scores = cross_validate(dt, train_input, train_target, cv=StratifiedKFold())
+print(np.mean(scores['test_score']))
+# 0.855300214703487
