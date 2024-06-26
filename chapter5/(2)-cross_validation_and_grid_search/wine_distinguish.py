@@ -112,3 +112,38 @@ from sklearn.model_selection import StratifiedKFold
 scores = cross_validate(dt, train_input, train_target, cv=StratifiedKFold())
 print(np.mean(scores['test_score']))
 # 0.855300214703487
+
+# 만약 훈련 세트를 섞은 후 10-폴드 교차 검증을 수행하려면 다음과 같이 작성해야 한다
+# n_splits 매개변수는 몇(k) 폴드 교차 검증을 할지 정한다
+splitter = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
+scores = cross_validate(dt, train_input, train_target, cv=splitter)
+print(np.mean(scores['test_score']))
+# 0.8574181117533719
+
+# KFold 클래스도 동일한 방식으로 사용할 수 있다
+
+# 하이퍼 파라미터 튜닝
+# 모델이 학습할 수 없어서 사용자가 지정해야만 하는 파라미터를 하이퍼파라미터라고 한다
+# 사이킷런과 같은 머신러닝 라이브러리를 사용할 때 이런 하이퍼파라미터는 모두 클래스나 메서드의 매개변수로 표현된다
+
+# 하이퍼파라미터 튜닝 작업
+# 라이브러리가 제공하는 기본값을 그대로 사용해 모델을 훈련 
+# 그다음 검증 세트의 점수나 교차 검증을 통해서 매개변수를 조금씩 바꿔 본다
+# 모델마다 적게는 1~2개에서 많게는 5~6개의 매개변수를 제공한다
+
+# 사람의 개입 없이 하이퍼파라미터 튜닝을 자동으로 수행하는 기술을 AutoML이라고 부른다
+
+# 예를 들어
+# 가령 결정 트리 모델에서 최적의 max_depth 값을 찾았다고 가정할 때
+# 그다음 max_depth를 최적의 값으로 고정하고 min_samples_split을 바꿔가며 최적의 값을 찾는다
+# 이렇게 한 매개변수의 최적값을 찾고 다른 매개변수의 최적값을 찾으면 안된다
+# max_depth의 최적값은 min_sample_split 매개변수의 값이 바뀌면 함께 달라진다
+# 즉 이 두 매개변수를 동시에 바꿔가며 최적의 값을 찾아야 한다
+
+# 게다가 매개변수가 많아지면 문제는 더 복잡해진다 
+# 파이썬의 for 반복문으로 이런 과정을 직접 구현할 수도 있지만 
+# 사이킷런에서 제공하는 그리드 서치(Grid Search)를 사용한다
+
+
+
+
