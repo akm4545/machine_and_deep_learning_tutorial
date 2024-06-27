@@ -44,3 +44,41 @@
 
 # 분류 = 샘플을 몇 개의 클래스 중 하나로 분류
 # 회귀 = 임의의 어떤 숫자를 에측하는 문제
+
+# RandomForestClassifier 클래스를 사용하여 와인 분류
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
+wine = pd.read_csv('https://bit.ly/wine_csv_data')
+data = wine[['alcohol', 'sugar', 'pH']].to_numpy()
+target = wine['class'].to_numpy()
+
+train_input, test_input, train_target, test_target = train_test_split(
+    data, target, test_size=0.2, random_state=42)
+
+# cross_validate() 함수를 사용하여 교차 검증 수행
+# RandomForestClassifier는 기본적으로 100개의 결정 트리를 사용하므로 n_jobs 매개변수를 -1로 지정하여 
+# 모든 CPU 코어를 사용하는 것이 좋다
+
+# cross_validate() 함수의 n_jobs 매개변수도 -1로 지정하여 최대한 병렬로 교차 검증 수행
+# return_train_score 매개변수를 True로 지정하면 검증 점수뿐만 아니라 훈련 세트에 대한 점수도 같이 반환
+# 훈련 세트와 검증 세트의 점수를 비교하면 과대적합을 파악하는데 용이(return_train_score 매개변수의 기본값은 False)
+
+from sklearn.model_selection import cross_validate
+from sklearn.ensemble import RandomForestClassifier
+
+rf = RandomForestClassifier(n_jobs=-1, random_state=42)
+scores = cross_validate(rf, train_input, train_target, return_train_score=True, n_jobs=-1)
+print(np.mean(scores['train_score']), np.mean(scores['test_score']))
+# 0.9973541965122431 0.8905151032797809
+# 훈련 세트에 다소 과대적합되어 있다
+# 이 예제는 매우 간단하고 특성이 많지 않아 그리드 서치를 사용하더라도 하이퍼파라미터 튜닝의 결과가 크게 나아지지 않는다
+
+# 랜덤 포레스트는 결정 트리의 앙상블이기 때문에 DecisionTreeClassifier가 제공하는 매개변수를 모두 제공
+# criterion, max_depth, max_features, min_samples_split, min_impurity_decrease, min_samples_leaf 등이다
+# 또한 결정 트리의 큰 장점 중 하나인 특성 중요도를 계산
+# 랜덤 포레스트의 특성 중요도는 각 결정 트리의 특성 중요도를 취합한 것이다
+
+# 랜덤 포레스트 모델을 훈련 세트에 훈련한 후 특성 중요도를 출력
+
