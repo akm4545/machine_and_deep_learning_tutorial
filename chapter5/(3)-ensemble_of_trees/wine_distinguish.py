@@ -81,4 +81,73 @@ print(np.mean(scores['train_score']), np.mean(scores['test_score']))
 # 랜덤 포레스트의 특성 중요도는 각 결정 트리의 특성 중요도를 취합한 것이다
 
 # 랜덤 포레스트 모델을 훈련 세트에 훈련한 후 특성 중요도를 출력
+rf.fit(train_input, train_target)
+print(rf.feature_importances_)
+# [0.23167441 0.50039841 0.26792718]
+
+# 결정 트리에서 만든 특성 중요도와 다른 이유는 랜덤 포레스트가 특성의 일부를 랜덤하게 선택하여
+# 결정 트리를 훈련하기 때문
+
+# 그 결과 하나의 특성에 과도하게 집중하지 않고 좀 더 많은 특성이 훈련에 기여할 기회를 얻는다
+# 이는 과대적합을 줄이고 일반화 성능을 높이는데 도움이 된다
+
+# RandomForestClassifier는 자체적으로 모델을 평가하는 점수를 얻을 수 있다
+# 랜덤 포레스트는 훈련 세트에서 중복을 허용하여 부트스트랩 샘플을 만들어 결정 트리를 훈련하는데 
+# 이때 부트스트랩 샘플에 포함되지 않고 남는 샘플이 있다
+# 이런 샘플을 OOB(out of bag) 샘플이라고 한다
+# 이 남는 샘플을 사용하여 부트스트랩 샘플로 훈련한 결정 트리를 평가할 수 있다
+# 마치 검증 세트의 역할을 한다
+
+# 이 점수를 얻으려면 RandomForestClassifier 클래스의 oob_score 매개변수를 True로 지정해야 한다 (기본값 False)
+# 이렇게 하면 랜덤 포레스트는 각 결정 트리의 OOB 점수를 평균하여 출력한다
+
+# OOB 점수 출력
+rf = RandomForestClassifier(oob_score=True, n_jobs=-1, random_state=42)
+rf.fit(train_input, train_target)
+
+print(rf.oob_score_)
+# 0.8934000384837406
+
+# OOB 점수를 사용하면 교차 검증을 대신할 수 있어서 결과적으로 훈련 세트에 더 많은 샘플을 사용할 수 있다
+
+# 엑스트라 트리(Extra Trees)
+# 랜덤 포레스트와 매우 비슷하게 동작
+# 기본적으로 100개의 결정 트리를 훈련한다
+# 랜덤 포레스트와 동일하게 결정 트리가 제공하는 대부분의 매개변수를 지원한다
+# 또한 전체 특성 중에 일부 특성을 랜덤하게 선택하여 노드를 분할하는 데 사용한다
+
+# 랜덤 포레스트와 엑스트라 트리의 차이점은 부트스트랩 샘플을 사용하지 않는다는 점이다
+# 각 결정 트리를 만들 때 전체 훈련 세트를 사용한다
+# 대신 노드를 분할할 때 가장 좋은 분할을 찾는 것이 아니라 무작위로 분할한다
+
+# DecisionTreeClasifier의 splitter 매개변수를 random으로 지정한 결정 트리를 사용한다
+
+# 하나의 결정 트리에서 특성을 무작위로 분할한다면 성능이 낮아지겠지만 많은 트리를 앙상블 하기 떄문에
+# 과대적합을 막고 검증 세트의 점수를 높이는 효과가 있다
+
+# 사이킷런에서 제공하는 엑스트라 트리는 ExtraTreesClassifier 이다
+
+# 엑스트라 트리 모델의 교차 검증 점수 확인
+from sklearn.ensemble import ExtraTreesClassifier
+
+et = ExtraTreesClassifier(n_jobs=-1, random_state=42)
+scores = cross_validate(et, train_input, train_target, return_train_score=True, n_jobs=-1)
+
+print(np.mean(scores['train_score'], np.mean(scores['test_score'])))
+# 0.9974503966084433 0.8887848893166506
+
+# 특성이 많지 않아 해당 예제에서는 랜덤 포레스트와 비슷한 결과를 얻는다
+# 보통 엑스트라 트리가 무작위성이 좀 더 크기 떄문에 랜덤 포레스트보다 더 많은 결정 트리를 훈련해야 한다
+# 하지만 랜덤하게 노드를 분할하기 떄문에 빠른 계산 속도가 엑스트라 트리의 장점이다
+# 결정 트리는 최적의 분할을 찾는 데 시간을 많이 소모한다
+# 특히 고려해야 할 특성의 개수가 많을 때 더 그렇다
+# 만약 무작위로 나눈다면 훨씬 빨리 트리를 구성할 수 있다
+
+# 엑스트라 트리의 특성 중요도 출력
+et.fit(train_input, train_target)
+print(et.feature_importances_)
+# [0.20183568 0.52242907 0.27573525]
+
+# 엑스트라 트리의 회구 버전은 ExtraTreesRegressor 클래스이다
+
 
