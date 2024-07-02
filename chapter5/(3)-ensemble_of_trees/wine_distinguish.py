@@ -253,3 +253,41 @@ print(result.importances_mean)
 # 이런 분석을 통해 모델을 실전에 투입헀을 때 어떤 특성에 관심을 둘지 예상할 수 있다
 
 # HisGradientBoostingClassifier를 사용해 테스트 세트에서의 성능을 최종적으로 확인
+hgb.score(test_input, test_target)
+# 0.8723076923076923
+
+# 테스트 세트에서는 약 87%의 정확도를 얻었다
+# 실전에 투입하면 성능은 이보다는 조금 더 낮을 것이다
+# 앙상블 모델은 확실히 단일 결정 트리보다 좋은 결과를 얻을 수 있다
+
+# 히스토그램 기반 그레이디언트 부스팅의 회귀 버전은 HistGradientBoostingRefressor 클래스에 구현되어 있다
+# 사이킷런에서 제공하는 히스토그램 기반 그레이디언트 부스팅이 비교적 새로운 기능이다
+# 사이킷런 말고도 그레이디언트 부스팅 알고리즘을 구현한 라이브러리가 ㅇ럿 있다
+
+# 가장 대표적인 라이브러리는 XGBoost이다 
+# 이 라이브러리도 코랩에서 사용할 수 있을 뿐만 아니라 사이킷런의 cross_validate() 함수와 함께 사용할 수도 있다
+# XGBoost는 다양한 부스팅 알고리즘을 지원한다
+# tree_method 매개변수를 hist로 지정하면 히스토그램 기반 그레이디언트 부스팅을 사용할 수 있다
+
+# XGBoost를 사용해 와인 데이터의 교차 검증 점수를 확인
+from xgboost import XGBClassifier
+
+xgb = XGBClassifier(tree_method='hist', random_state=42)
+scores = cross_validate(xgb, train_input, train_target, return_train_score=True)
+
+print(np.mean(scores['train_score']), np.mean(scores['test_score']))
+# 0.9558403027491312 0.8782000074035686
+
+# 널리 사용하는 또 다른 히스토그램 기반 그레이디언트 부스팅 라이브러리는 마이크로소프트에서 만든 LightGBM이다
+# LightGBM은 빠르고 최신 기술을 많이 적용하고 있어 인기가 점점 높아지고 있다 
+
+from lightgbm import LGBMClassifier
+
+lgb = LGBMClassifier(random_state=42)
+scores = cross_validate(lgb, train_input, train_target, return_train_score=True, n_jobs=-1)
+
+print(np.mean(scores['train_score']), np.mean(scores['test_score']))
+# 0.935828414851749 0.8801251203079884
+
+# 사이킷런의 히스토그램 기반 그레이디언트 부스팅이 LightGBM에서 영향을 많이 받았다
+
