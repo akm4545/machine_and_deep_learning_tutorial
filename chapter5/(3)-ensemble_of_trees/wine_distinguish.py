@@ -200,3 +200,56 @@ print(gb.feature_importances_)
 # 하지만 순서대로 트리를 추가하기 떄문에 훈련 속도가 느리다 
 # GradientBoostingClassifier에는 n_jobs 매개변수가 없다
 # 그레이디언트 부스팅의 회귀 버전은 GradientBoostingRegressor이다
+
+# 히스토그램 기반 그레이디언트 부스팅(Histogram-based Gradient Boosting)
+# 정형 데이터를 다루는 머신러닝 알고리즘 중에 가장 인기가 높은 알고리즘
+# 히스토그램 기반 그레이디언트 부스팅은 먼저 입력 특성을 256개의 구간으로 나눈다
+# 따라서 노드를 분할할 때 최적의 분할을 매우 빠르게 찾을 수 있다
+# 히스토그램 기반 그레이디언트 부스팅은 256개의 구간 중에서 하나를 떼어 놓고 누락된 값을 위해서 사용한다
+# 따라서 입력에 누락된 특성이 있더라도 이를 따로 전처리할 필요가 없다
+
+# 사이킷런의 히스토그램 기반 그레이디언트 부스팅 클래스는 HistGradientBoostingClassifier이다
+# 일반적으로 HistGradientBoostingClassifier는 기본 매개변수에서 안정적인 성능을 얻을 수 있다
+# 트리의 개수를 지정하는데 n_estimators 대신에 부스팅 반복 횟수를 지정하는 max_iter를 사용한다
+# 성능을 높이려면 max_iter 매개변수를 테스트하자 
+
+# HistGradientBoostingClassifier을 사용하여 와인 데이터셋의 교차 검증 점수 확인
+# from sklearn import enable_hist_gradient_boosting
+from sklearn.ensemble import HistGradientBoostingClassifier
+
+hgb = HistGradientBoostingClassifier(random_state=42)
+scores = cross_validate(hgb, train_input, train_target, return_train_score=True)
+
+print(np.mean(scores['train_score']), np.mean(scores['test_score']))
+# 0.9321723946453317 0.8801241948619236
+
+# 과대적합을 잘 억제하면서 그레이디언트 부스팅보다 조금 더 높은 성능을 제공한다
+
+# 히스토그램 기반 그레이디언트 부스팅의 특성 중요도를 계산하기 위해 permutation_importance() 함수를 사용한다
+# 이 함수는 특성을 하나씩 랜덤하게 섞어서 모델의 성능이 변화하는지를 관찰하여 어떤 특성이 중요한지를 계산한다
+# 훈련 세트뿐만 아니라 테스트 세트에도 적용할 수 있고 사이킷런에서 제공하는 추정기 모델에 모두 사용할 수 있다
+
+# 히스토그램 기반 그레이디언트 부스팅 모델을 훈련하고 훈련 세트에서 특성 중요도 계산 
+# n_repeats 매개변수는 랜덤하게 섞을 횟수를 지정 기본값은 5
+from sklearn.inspection import permutation_importance
+
+hgb.fit(train_input, train_target)
+result = permutation_importance(hgb, train_input, train_target, n_repeats=10, random_state=42, n_jobs=-1)
+
+print(result.importances_mean)
+# [0.08876275 0.23438522 0.08027708]
+
+# permutation_importance() 함수가 반환하는 객체는 반복하여 얻은 특성 중요도(importances), 평균(importances_mean),
+# 표준 편차(importances_std)를 담고 있다
+# 평균을 출력해 보면 랜덤 포레스트와 비슷한 비율임을 알 수 있다
+
+# 테스트 세트에서 특성 중요도를 계산
+result = permutation_importance(hgb, test_input, test_target, n_repeats=10, random_state=42, n_jobs=-1)
+print(result.importances_mean)
+
+# [0.05969231 0.20238462 0.049     ]
+
+# 테스트 세트의 결과를 보면 그레이디언트 부스팅과 비슷하게 조금 더 당도에 집중하고 있다
+# 이런 분석을 통해 모델을 실전에 투입헀을 때 어떤 특성에 관심을 둘지 예상할 수 있다
+
+# HisGradientBoostingClassifier를 사용해 테스트 세트에서의 성능을 최종적으로 확인
