@@ -150,4 +150,53 @@ print(et.feature_importances_)
 
 # 엑스트라 트리의 회구 버전은 ExtraTreesRegressor 클래스이다
 
+# 그레이디언트 부스팅(gradient boosting)
+# 깊이가 얕은 결정 트리를 사용하여 이전 트리의 오차를 보완하는 방식으로 앙상블 하는 방법
+# 사이킷런의 GradientBoostingClassifier는 기본적으로 깊이가 3인 결정 트리 100개를 사용
+# 깊이가 얕은 결정 트리를 사용하기 때문에 과대적합에 강하고 일반적으로 높은 일반화 성능을 기대할 수 있다
 
+# 경사 하강법을 사용하여 트리를 앙상블에 추가한다
+# 분류에서는 로지스틱 손실 함수를 사용하고 회귀에서는 평균 제곱 오차 함수를 사용한다
+
+# 손실 함수를 산으로 정의하면 가장 낮은 곳을 찾아 내려오는 방법은 모델의 가중치와 절편을 조금씩 바꾸는 것이다
+# 그레이디언트 부스팅은 결정 트리를 계속 추가하면서 가장 낮은 곳을 찾아 이동한다
+# 그래서 깊이가 얕은 트리를 사용한다
+# 학습률 매개변수로 속도를 조절한다
+
+# GradientBoostingClassifier를 사용하여 와인 데이터셋의 교차 검증 점수 확인
+from sklearn.ensemble import GradientBoostingClassifier
+
+gb = GradientBoostingClassifier(random_state=42)
+scores = cross_validate(gb, train_input, train_target, return_train_score=True, n_jobs=-1)
+
+print(np.mean(scores['train_score']), np.mean(scores['test_score']))
+# 0.8881086892152563 0.8720430147331015
+
+# 거의 과대적합이 되지 않는다
+# 그레이디언트 부스팅은 결정 트리의 개수를 늘려도 과대적합에 매우 강하다
+# 학습률을 증가시키고 트리의 개수를 늘리면 조금 더 성능이 향상될 수 있다
+
+gb = GradientBoostingClassifier(n_estimators=500, learning_rate=0.2, random_state=42)
+scores = cross_validate(gb, train_input, train_target, return_train_score=True, n_jobs=-1)
+
+print(np.mean(scores['train_score']), np.mean(scores['test_score']))
+# 0.9464595437171814 0.8780082549788999
+
+# 결정 트리 개수를 500개로 5배 늘렸지만 과대적합을 잘 억제하고 있다
+# 학습률 learning_rate의 기본값은 0.1dlek 
+# 그레이디언트 부스팅도 특성 중요도를 제공한다
+gb.fit(train_input, train_target)
+print(gb.feature_importances_)
+# [0.15872278 0.68010884 0.16116839]
+
+# 그레이디언트 부스팅이 랜덤 포레스트보다 일부 특성(당도)에 더 집중한다
+
+# 트리 훈련에 사용할 훈련 세트의 비율을 정하는 subsample 매개변수가 있다
+# 이 매개변수의 기본값은 1.0으로 전체 훈련 세트를 사용한다
+# subsample이 1보다 작으면 훈련 세트의 일부를 사용한다
+# 이는 마치 경사 하강법 단계마다 일부 샘플을 랜덤하게 선택하여 진행하는 확률적 경사 하강법이나 미니채비 경사 하강법과 비슷하다
+
+# 일반적으로 그레이디언트 부스팅이 랜덤 포레스트보다 조금 더 높은 성능을 얻을 수 있다.
+# 하지만 순서대로 트리를 추가하기 떄문에 훈련 속도가 느리다 
+# GradientBoostingClassifier에는 n_jobs 매개변수가 없다
+# 그레이디언트 부스팅의 회귀 버전은 GradientBoostingRegressor이다
