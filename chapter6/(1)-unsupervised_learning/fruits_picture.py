@@ -123,3 +123,87 @@ plt.hist(np.mean(pineapple, axis=1), alpha=0.8)
 plt.hist(np.mean(banana, axis=1), alpha=0.8)
 plt.legend(['apple', 'pineapple', 'banana'])
 plt.show()
+
+# 히스토그램 출력 결과를 보면 바나나 사진의 평균값은 40 아래에 집중되어 있다
+# 사과와 파인애플은 90~100 사이에 많이 모여있다
+
+# 바나나는 사과나 파인애플과 확실히 구분된다
+# 바나나는 차지하는 영역이 작기 때문에 평균값이 작다
+
+# 사과와 파인애플은 픽셀값만으로는 구분하기 쉽지 않다
+# 형태가 대체로 동그랗고 사진에서 차지하는 크기도 비슷하기 떄문이다
+
+# 샘플의 평균값이 아니라 픽셀별 평균값을 비교
+# 전체 샘플에 대해 각 픽셀의 평균을 계산
+# 세 과일은 모양이 다르므로 픽셀값이 높은 위치가 조금 다를 것이다
+
+# 픽셀의 평균 계산 
+# axis=0으로 지정
+# 맷플롯립의 bar() 함수를 사용해 픽셀 10000개에 대한 평규낪을 막대그래프로 출력
+# subplots() 함수로 3개의 서브 그래프를 만든다
+fig, axs = plt.subplots(1, 3, figsize=(20, 5))
+axs[0].bar(range(10000), np.mean(apple, axis=0))
+axs[1].bar(range(10000), np.mean(pineapple, axis=0))
+axs[2].bar(range(10000), np.mean(banana, axis=0))
+plt.show()
+
+# 출력된 3개의 그래프를 보면 과일마다 값이 높은 구간이 다르다
+# 사과는 사진 아래쪽으로 갈수록 값이 높아지고 
+# 파인애플 그래프는 비교적 고르면서 높다
+# 바나나는 확실히 중앙의 픽셀값이 높다
+
+# 픽셀 평균값을 100 X 100 크기로 바꿔서 이미지처럼 출력하여 위 그래프와 비교하면 더 좋다
+# 픽셀을 평균 낸 이미지를 모든 사진을 합쳐 놓은 대표 이미지로 생각할 수 있다
+
+# 사과의 픽셀 평균값을 구하여 2차원 배열로 변환
+apple_mean = np.mean(apple, axis=0).reshape(100, 100)
+pineapple_mean = np.mean(pineapple, axis=0).reshape(100, 100)
+banana_mean = np.mean(banana, axis=0).reshape(100, 100)
+
+fig, axs = plt.subplots(1, 3, figsize=(20, 5))
+axs[0].imshow(apple_mean, cmap='gray_r')
+axs[1].imshow(pineapple_mean, cmap='gray_r')
+axs[2].imshow(banana_mean, cmap='gray_r')
+
+plt.show()
+
+# 평균값과 가까운 사진 고르기
+# 절댓값 오차를 사용
+# fruits 배열에 있는 모든 샘플에서 apple_mean을 뺀 절댓값의 평균을 계산
+
+# 넘파이의 abs() 함수로 절댓값을 계산
+# np.abs(-1)은 1을 반환
+# 배열을 입력하면 모든 원소의 절댓값을 계산하여 입력과 동일한 크기의 배열을 반환
+# 이 함수는 np.absolute() 함수의 다른 이름이다
+
+# 다음 코드의 abs_diff는 (300, 100, 100) 크기의 배열이다
+# 따라서 각 샘플에 대한 평균을 구하기 위해 axis에 두 번째, 세 번째 차원을 모두 지정 (사과, 파인애플, 바나나의 1개 과일 픽셀 평균값)
+# 이렇게 계산한 abs_mean은 각 샘플의 오차 평균이므로 크기가 (300,)인 1차원 배열이다
+abs_diff = np.abs(fruits - apple_mean)
+abs_mean = np.mean(abs_diff, axis=(1, 2))
+print(abs_mean.shape)
+
+# apple_mean과 오차가 가장 적은 샘플 100개 고르기
+# np.argsort() 함수는 작은 것에서 큰 순서대로 나열한 abs_mean배열의 인덱스를 반환
+# 이 인덱스 중에서 처음 100개를 선택해 10 X 10 격자로 이루어진 그래프 출력
+
+# 깔끔하게 이미지만 그리기 위해 axis('off')로 사용하여 좌표축을 그리지 않음
+apple_index = np.argsort(abs_mean)[:100]
+
+fig, axs = plt.subplots(10, 10, figsize=(10, 10))
+for i in range(10):
+    for j in range(10):
+        axs[i, j].imshow(fruits[apple_index[i*10+j]], cmap='gray_r')
+        axs[i, j].axis('off')
+
+plt.show()
+# 100개 모두 사과 이미지만 출력된다
+
+# 군집 (clustering)
+# 비슷한 샘플끼리 그룹으로 모으는 작업
+# 군집은 대표적인 비지도 학습 작업 중 하나
+
+# 클러스터 (cluster)
+# 군집 알고리즘에서 만든 그룹
+
+# 실제 비지도 학습에서는 타깃값을 모르기 때문에 이처럼 샘플의 평균값을 미리 구할 수 없다
