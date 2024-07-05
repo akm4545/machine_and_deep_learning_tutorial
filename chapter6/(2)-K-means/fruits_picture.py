@@ -59,3 +59,49 @@ print(np.unique(km.labels_, return_counts=True))
 # 세 번째 클러스터(레이블 2)가 91개의 샘플 수집
 
 # 각 클러스터가 어떤 이미지를 나타냈는지 그림으로 출력하기 위해 간단한 유틸리티 함수 draw_fruits() 만들기
+import matplotlib.pyplot as plt
+
+# 3차원 배열을 입력받아 가로로 10개씩 이미지 출력
+# 샘플 개수에 따라 행과 열의 개수를 계산하고 figsize를 지정
+# figsize는 ratio 매개변수에 비례하여 커진다 
+# ratio의 기본값은 1
+
+# 2중 for 반복문을 사용하여 먼저 첫 번째 행을 따라 이미지를 그린다
+# 두 번째 행의 이미지를 그리는 식으로 계속된다
+def draw_fruits(arr, ratio=1):
+    # n은 샘플 개수
+    n = len(arr) 
+    # 한 줄에 10개씩 이미지를 그린다
+    # 샘플 개수를 10으로 나누어 전체 행 개수를 계산한다
+    rows = int(np.ceil(n / 10))
+    # 행이 1개이면 열의 개수는 샘플 개수이다 
+    # 그렇지 않으면 10개이다
+    cols = n if rows < 2 else 10
+
+    fig, axs = plt.subplots(rows, cols, figsize=(cols*ratio, rows*ratio), squeeze=False)
+
+    for i in range(rows):
+        for j in range(cols):
+            # n 개까지만 그린다
+            if i * 10 + j < n: 
+                axs[i, j].imshow(arr[i * 10 + j], cmap='gray_r')
+            axs[i, j].axis('off')
+    
+    plt.show()
+
+# 이 함수를 사용해 레이블이 0인 과일 사진을 모두 그린다
+# km.labels_==0과 같이 쓰면 km.labels_ 배열에서 값이 0인 위치는 True, 그 외는 모두 False가 된다
+# 넘파이의 불리언 인덱싱 사용
+
+draw_fruits(fruits[km.labels_==0])
+# 해당 클러스터는 대부분 파인애플이다
+
+# 다른 두 클러스터도 출력
+draw_fruits(fruits[km.labels_==1])
+draw_fruits(fruits[km.labels_==2])
+
+# 레이블이 1인 클러스터는 바나나로만 이루어져 있고 
+# 레이블이 2인 클러스터는 사과로만 이루어져 있다
+# 하지만 레이블이 0인 클러스터는 파인애플에 사과 9개와 바나나 2개가 섞여 있다
+# k-평균 알고리즘이 이 샘플들을 완벽하게 구별해내지는 못했지만 훈련 데이터에 타깃 레이블을 전혀 제공하지 않았음에도
+# 스스로 비슷한 샘플들을 아주 잘 모았다
