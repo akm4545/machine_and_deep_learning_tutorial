@@ -158,4 +158,74 @@ print(np.mean(scores['fit_time']))
 scores = cross_validate(lr, fruits_pca, target)
 
 print(np.mean(scores['test_score']))
+# 1.0
 print(np.mean(scores['fit_time']))
+# 0.04012737274169922
+
+# 50개의 특성만 사용했는데도 정확도가 100%이고 훈련 시간은 0.04초이다
+# PCA로 훈련 데이터의 차원을 축소하면 저장 공간뿐만 아니라 머신러닝 모델의 훈련
+# 속도도 높일 수 있다
+
+# PCA 클래스를 사용할 때 n_components 매개변수에 주성분의 개수를 지정했다
+# 이 대신 원하는 설명된 분산의 비율을 입력할 수도 있다
+# PCA 클래스는 지정된 비율에 도달할 때까지 자동으로 주성분을 찾는다
+
+# 설명된 분산의 50%에 달하는 주성분을 찾는 PCA 모델
+pca = PCA(n_components=0.5)
+pca.fit(fruits_2d)
+
+# 찾은 주성분 출력
+print(pca.n_components_)
+# 2
+
+# 단 2개의 특성만으로 원본 데이터에 있는 분산의 50%를 표현할 수 있었다
+
+# 해당 모델로 원본 데이터 변환
+# 주성분이 2개이므로 변환된 데이터의 크기는 (300, 2)가 될 것이다
+fruits_pca = pca.transform(fruits_2d)
+print(fruits_pca.shape)
+# (300, 2)
+
+# 2개의 특성만 사용한 교차 검증 결과 출력
+scores = cross_validate(lr, fruits_pca, target)
+
+print(np.mean(scores['test_score']))
+# 0.9933333333333334
+print(np.mean(scores['fit_time']))
+# 0.04055919647216797
+
+# 코드를 입력하면 로지스틱 회귀 모델이 완전히 수렴하지 못했으니 반복 횟수를 증가하는 경고가 출력된다
+# 하지만 교차 검증의 결과가 충분히 좋기 때문에 무시해도 좋다
+
+# 차원 축소된 데이터를 사용해 k-평균 알고리즘으로 클러스터 찾기
+from sklearn.cluster import KMeans
+
+km = KMeans(n_clusters=3, random_state=42)
+km.fit(fruits_pca)
+
+print(np.unique(km.labels_, return_counts=True))
+# (array([0, 1, 2], dtype=int32), array([110,  99,  91]))
+
+# 클러스터는 각각 110개, 99개 91개의 샘플을 포함하고 있다
+# 이는 원본 데이터를 사용했을 때와 거의 비슷한 결과다
+
+# KMeans가 찾은 레이블을 사용해 과일 이미지 출력
+for label in range(0, 3):
+    draw_fruits(fruits[km.labels_ == label])
+    print("\n")
+
+# 훈련 데이터의 차원을 줄이면 또 하나 얻을 수 있는 장점은 시각화다
+# 3개 이하로 차원을 줄이면 화면에 풀력하기 비교적 쉽다
+# fruits_pca 데이터는 2개의 특성이 있기 때문에 2차원으로 표현할 수 있다
+# 앞에서 찾은 km.lables_를 사용해 클러스터별로 나누어 산점도 출력
+for label in range(0, 3):
+    data = fruits_pca[km.labels_ == label]
+    plt.scatter(data[:,0], data[:,1])
+plt.legend(['apple', 'banana', 'pineapple'])
+plt.show()
+
+# 산점도를 출력하면 각 클러스터의 산점도가 잘 구분된다
+# 산점도를 보면 사과와 파인애플 클러스터의 경계가 가깝게 붙어 있다
+# 이 두 클러스터의 샘플은 몇 개가 혼동을 일으키기 쉽다
+# 데이터를 시각화하면 예상치 못한 통찰을 얻을 수 있다
+# 그런 면에서 차원 축소는 매우 중요한 도구 중 하나다
