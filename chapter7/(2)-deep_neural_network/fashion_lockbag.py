@@ -173,3 +173,92 @@ model.fit(train_scaled, train_target, epochs=5)
 # 1500/1500 [==============================] - 4s 3ms/step - loss: 0.3526 - accuracy: 0.8719
 # Epoch 5/5
 # 1500/1500 [==============================] - 5s 4ms/step - loss: 0.3346 - accuracy: 0.8773
+
+# 추가된 층이 성능을 향샹시켰다
+
+# 초창기 인공 신경망의 은닉층에 많이 사용된 활성화 함수는 시그모이드 함수였다
+# 이 함수에는 단점이 있는데 함수의 오른쪽과 왼쪽 끝으로 갈수록 그래프가 누워있기 떄문에
+# 올바른 출력을 만드는데 신속하게 대응하지 못한다
+# 특히 층이 많은 심층 신경망일수록 그 효과가 누적되어 학습을 더 어렵게 만든다
+
+# 렐루(ReLU)함수
+# 이를 개선하기 위해 나온 함수
+# 렐루 함수는 아주 간단하다
+# 입력이 양수일 경우 마치 활성화 함수가 없는 것처럼 그냥 입력을 동과시키고 음수일 경우 0으로 만든다
+
+# 렐루 함수는 max(0, z)와 같이 쓸 수 있다
+# 이 함수는 z가 0보다 크면 z를 출력하고 z가 0보다 작으면 0을 출력한다
+# 렐루 함수는 특히 이미지 처리에서 좋은 성능을 낸다고 알려져 있다
+
+# 패션 MNIST 데이터는 28 * 28 크기이기 떄문에 인공 신경망에 주입하기 위해 넘파이 배열의
+# reshape() 메서드를 사용해 1차원으로 펼쳤다
+# 직접 펼쳐도 좋지만 케라스는 이를 위한 Flatten 층을 제공한다
+
+# Flatten 클래스는 배치 차원을 제외하고 나머지 입력 차원을 모두 일렬로 펼치는 역할만 한다
+# 입력에 곱해지는 가중치나 절편이 없다
+# 따라서 인공 신경망의 성능을 위해 기여하는 바는 없다
+# 하지만 Flatten 클래스를 층처럼 입력층과 은닉층 사이에 추가하기 때문에 이를 층이라 부른다
+
+# Flatten층 추가 
+model = keras.Sequential()
+
+model.add(keras.layers.Flatten(input_shape=(28, 28)))
+model.add(keras.layers.Dense(100, activation='relu'))
+model.add(keras.layers.Dense(10, activation='softmax'))
+
+# 이 신경망을 깊이가 3인 신경망이라고 부르지는 않는다
+# Flatten 클래스는 학습하는 층이 아니기 떄문이다
+
+model.summary()
+
+# Model: "sequential_6"
+# _________________________________________________________________
+#  Layer (type)                Output Shape              Param #   
+# =================================================================
+#  flatten (Flatten)           (None, 784)               0         
+                                                                 
+#  dense_12 (Dense)            (None, 100)               78500     
+                                                                 
+#  dense_13 (Dense)            (None, 10)                1010      
+                                                                 
+# =================================================================
+# Total params: 79510 (310.59 KB)
+# Trainable params: 79510 (310.59 KB)
+# Non-trainable params: 0 (0.00 Byte)
+# _________________________________________________________________
+
+# Flatten 층이 신경망 모델에 추가되면서 784개의 입력이 첫 번째 은닉층에 전달된다는 
+# 것을 알 수 있다는 장점이 있다
+
+# 입력 데이터에 대한 전처리 과정을 가능한 모델에 포함시키는 것이 케라스 API의 철학 중 하나이다
+
+# 훈련 데이터 다시 준비
+# reshape() 메서드를 적용하지 않는다
+(train_input, train_target), (test_input, test_target) = keras.datasets.fashion_mnist.load_data()
+
+train_scaled = train_input / 255.0
+train_scaled, val_scaled, train_target, val_target = train_test_split(
+    train_scaled, train_target, test_size=0.2, random_state=42)
+
+# 모델 컴파일 후 훈련
+model.compile(loss='sparse_categorical_crossentropy', metrics='accuracy')
+model.fit(train_scaled, train_target, epochs=5)
+
+# Epoch 1/5
+# 1500/1500 [==============================] - 5s 3ms/step - loss: 0.5366 - accuracy: 0.8114
+# Epoch 2/5
+# 1500/1500 [==============================] - 5s 3ms/step - loss: 0.3959 - accuracy: 0.8569
+# Epoch 3/5
+# 1500/1500 [==============================] - 4s 3ms/step - loss: 0.3557 - accuracy: 0.8708
+# Epoch 4/5
+# 1500/1500 [==============================] - 5s 3ms/step - loss: 0.3338 - accuracy: 0.8815
+# Epoch 5/5
+# 1500/1500 [==============================] - 5s 3ms/step - loss: 0.3163 - accuracy: 0.8867
+
+# 시그모이드 함수와 비교하면 성능이 조금 향상되었다
+
+# 검증 세트 성능 확인
+model.evaluate(val_scaled, val_target)
+# [0.4111086130142212, 0.8600000143051147]
+
+# 은닉층을 추가하지 않은 경우보다 몇 퍼센트 성능이 향상되었다
