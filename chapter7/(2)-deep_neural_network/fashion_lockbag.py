@@ -262,3 +262,100 @@ model.evaluate(val_scaled, val_target)
 # [0.4111086130142212, 0.8600000143051147]
 
 # 은닉층을 추가하지 않은 경우보다 몇 퍼센트 성능이 향상되었다
+
+# 신경망 하이퍼파리미터 종류
+# 은닉층 개수
+# 은닉층 뉴런 개수
+# 활성화 함수
+# 층의 종류
+# 케라스의 기본 미니배치 경사 하강법의 미니배치 개수 (batch_size)
+# fit 메서드의 반복 횟수(epochs)
+# compile() 메서드에서는 케라스의 기본 경사 하강법 알고리즘인 RMSprop을 사용했다
+# 케라스는 다양한 종류의 경사 하강법 알고리즘을 제공
+# 이들을 옵티마이저(optimizer)라고 부른다
+# RMSprop의 학습률도 하이퍼 파라미터
+
+# 가장 기본적인 옵티마이저는 확률 경사 하강법인 SGD이다
+# 미니배치를 사용
+
+# SGD 옵티마이저 사용 예시
+model.compile(optimizer='sgd', loss='sparse_categorical_crossentropy', metrics='accuracy')
+
+# 이 옵티마이저는 tensorflow.keras.optimizers 패키지 아래 SGD 클래스로 구현
+# sgd 문자열은 해당 클래스의 기본 설정 매개변수로 생성한 객체와 동일
+
+# 아래 코드는 위의 코드와 동일하다
+sgd = keras.optimizers.SGD()
+model.compile(optimizer=sgd, loss='sparse_categorical_crossentropy', metrics='accuracy')
+
+# SGD 클래스의 학습률 기본값이 0.01일 때 이를 바꾸고 싶다면 
+# learning_rate 매개변수 지정
+sgd = keras.optimizers.SGD(learning_rate=0.1)
+
+# 많이 사용하는 옵티마이저
+# 기본 경사 하강법 옵티마이저
+# SGD(learning_rate-0.01), 모멘텀(momentum > 0), 네스테로프 모멘텀(nesterov=True)
+# 적응적 학습률 옵티마이저
+# RMSprop(learning_rate-0.001), Adam(learning_rate-0.001), Adagrad
+
+# 기본 경사 하강법 옵티마이저는 모두 SGD 클래스에서 제공
+# SGD 클래스의 momentum 매개변수의 기본값은 0이다 
+# 이를 0보다 큰 값으로 지정하면 마치 그레이디언트 가속도처럼 사용하는 모멘텀 최적화(momentum optimization)
+# 를 사용
+# 보통 momentum 매개변수는 0.9 이상을 지정한다
+
+# SGD 클래스의 nesterov 매개변수를 기본값 False에서 True로 바꾸면 네스테로프 모멘텀 최적화(nesterov momentum optimization)
+# [또는 네스테로프 가속 경사]를 사용한다
+sgd = keras.optimizers.SGD(momentum=0.9, nesterov=True)
+
+# 네스테로프 모멘텀은 모멘텀 최적화를 2번 반복하여 구현한다
+# 대부분의 경우 네스테로프 모멘텀 최적화가 기본 확률적 경사 하강법보다 더 나은 성능을 제공한다
+
+# 모델이 최적점에 가까이 갈수록 학습률을 낮출 수 있다
+# 이렇게 하면 안정적으로 최적점에 수렴할 가능성이 높다
+# 이런 학습률을 적응적 학습률(adaptive learning rate)이라고 한다
+# 이런 방식들은 학습률 매개변수를 튜닝하는 수고를 덜 수 있는 것이 장점이다
+
+# 적응적 합습률을 사용하는 대표적인 옵티마이저는 Adagrad와 RMSprop이다
+# 각각 compile() 메서드의 optimizer 매개변수에 adagrad와 rmsprop으로 지정할 수 있다
+# optimizer 매개변수의 기본값은 rmsprop이다 
+
+# 옵티마이저 변경
+adagrad = keras.optimizers.Adagrad()
+model.compile(optimizer=adagrad, loss='sparse_categorical_crossentropy', metrics='accuracy')
+
+rmsprop = keras.optimizers.RMSprop()
+model.compile(optimizer=rmsprop, loss='sparse_categorical_crossentropy', metrics='accuracy')
+
+# 모멘텀 최적화와 RMSprop의 장점을 접목한 것이 Adam
+# Adam은 RMSprop과 함께 맨처음 시도해 볼 수 있는 좋은 알고리즘이다
+# keras.optimizers 패키지 아래에 있다
+# 적응적 학습률을 사용하는 이 3개의 클래스는 learning_rate 매개변수의 기본값으로 모두 0.001을 사용
+
+# Adam 클래스의 매개변수 기본값을 사용해 패션 MNIST 모델 훈련
+model = keras.Sequential()
+model.add(keras.layers.Flatten(input_shape=(28, 28)))
+model.add(keras.layers.Dense(100, activation='relu'))
+model.add(keras.layers.Dense(10, activation='softmax'))
+
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics='accuracy')
+model.fit(train_scaled, train_target, epochs=5)
+# Epoch 1/5
+# 1500/1500 [==============================] - 6s 3ms/step - loss: 0.5248 - accuracy: 0.8176
+# Epoch 2/5
+# 1500/1500 [==============================] - 7s 5ms/step - loss: 0.3952 - accuracy: 0.8580
+# Epoch 3/5
+# 1500/1500 [==============================] - 5s 3ms/step - loss: 0.3536 - accuracy: 0.8714
+# Epoch 4/5
+# 1500/1500 [==============================] - 8s 5ms/step - loss: 0.3278 - accuracy: 0.8806
+# Epoch 5/5
+# 1500/1500 [==============================] - 5s 3ms/step - loss: 0.3076 - accuracy: 0.8863
+# <keras.src.callbacks.History at 0x7e24ad34a380>
+
+# 기본 RMSprop을 사용했을 때와 거의 같은 성능을 보여준다
+
+# 검증세트 확인
+model.evaluate(val_scaled, val_target)
+# [0.35007190704345703, 0.8737499713897705]
+
+# 환경마다 차이가 있지만 여기서는 기본 RMSprop보다 조금 나은 성능을 낸다
