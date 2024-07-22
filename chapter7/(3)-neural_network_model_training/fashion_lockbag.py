@@ -74,3 +74,43 @@ plt.plot(history.history['accuracy'])
 plt.xlabel('epoch')
 plt.ylabel('accuracy')
 plt.show()
+
+# 출력시 에포크마다 손실이 감소하고 정확도가 향상된다
+
+# 에포크 횟수 20회로 증가
+model = model_fn()
+model.compile(loss='sparse_categorical_crossentropy', metrics='accuracy')
+history = model.fit(train_scaled, train_target, epochs=20, verbose=0)
+
+plt.plot(history.history['loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.show()
+# 손실이 잘 감소한다
+
+# 에포크에 따른 과대적합과 과소적합을 파악하려면 훈련 세트에 대한 점수뿐만 아니라
+# 검증 세트에 대한 점수도 필요하다
+
+# 인공 신경망 모델이 최적화하는 대상은 정확도가 아니라 손실 함수이다
+# 이따금 손실 감소에 비례하여 정확도가 높아지지 않는 경우도 있다
+# 따라서 모델이 잘 훈련되었는지 판단하려면 정확도보다는 손실 함수의 값을 확인하는 것이 더 낫다
+
+# 에포크마다 검증 손실을 계산하기 위해 케라스 모델의 fit() 메서드에 검증 데이터를 전달할 수 있다
+# validation_data 매개변수에 검증에 사용할 입력과 타깃값을 듀플로 만들어 전달
+model = model_fn()
+model.compile(loss='sparse_categorical_crossentropy', metrics='accuracy')
+history = model.fit(train_scaled, train_target, epochs=20, verbose=0, validation_data=(val_scaled, val_target))
+
+# history 객체의 키 추출
+print(history.history.keys())
+# dict_keys(['loss', 'accuracy', 'val_loss', 'val_accuracy'])
+# 검증 세트에 대한 손실은 val_loss
+# 정화도는 val_accuracy
+
+# 과대/과소적합 문제를 조사하기 위해 훈련 손실, 검증 손실을 그래프로 출력
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['train', 'val'])
+plt.show()
