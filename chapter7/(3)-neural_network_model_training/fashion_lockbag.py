@@ -114,3 +114,110 @@ plt.xlabel('epoch')
 plt.ylabel('loss')
 plt.legend(['train', 'val'])
 plt.show()
+
+# 초기에 검증 손실이 감소하다가 다섯 번째 에포크에서 다시 상승하기 시작한다
+# 훈련 손실은 꾸준히 감소하기 때문에 전형적인 과대적합 모델이 만들어진다
+# 검증 손실이 상승하는 시점을 가능한 뒤로 늦추면 검증 세트에 대한 손실이 줄어들 뿐만 아니라
+# 검증 세트에 대한 정확도도 증가할 것이다
+
+# 옵티마이저 하이퍼파리미터를 조정하여 과대적합 완화
+# 기본 RMSprop 옵티마이저는 많은 문제에서 잘 동작한다
+# 만약 이 옵티마이저 대신 다른 옵티마이저를 테스트해 본다면 Adam을 사용하자
+# Adam은 적응적 학습률을 사용하기 떄문에 에포크가 진행되면서 학습률의 크기를 조정할 수 있다
+
+# Adam 옵티마이저 적용
+model = model_fn()
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics='accuracy')
+history = model.fit(train_scaled, train_target, epochs=20, verbose=0, validation_data=(val_scaled, val_target))
+
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['train', 'val'])
+plt.show()
+
+# 과대 적합이 훨씬 줄은 그래프가 나온다
+# 검증 손실 그래프에 여전히 요동이 남아 있지만 열 번째 에포크까지 전반적인 감소 추세가 이어진다
+# 이는 Adam 옵티마이저가 이 데이터셋에 잘 맞는다는것을 보여준다
+# 더 나은 손실 곡선을 얻으려면 학습률을 조정해서 다시 시도해 볼 수도 있다
+
+# 드롭아웃(dropout)
+# 딥러닝의 아버지로 불리는 제프리 헌틴이 소개
+# 이 방식은 훈련 과정에서 층에 있는 일부 뉴런을 랜덤하거 꺼서(뉴런의 출력을 0으로 만들어)
+# 과대적합을 막는다
+
+# 뉴런은 랜덤하게 드롭아웃되고 얼마나 많은 뉴런을 드롭할지는 하이퍼파라미터로 정한다
+
+# 이전 층의 일부 뉴런이 랜덤하게 꺼지면 특정 뉴런에 과대하게 의존하는 것을 줄일 수 있고
+# 모든 입력에 대해 주의를 기울여야 한다
+# 일부 뉴런의 출력이 없을 수 있다는 것을 감안하면 이 신경망은 더 안정적인 예측을 만들 수 있을 것이다
+
+# 또 다른 해석은 드롭아웃을 적용해 훈련하는 것이 마치 신경망을 앙상블 하는 것처럼 
+# 상상할 수 있다 앙상블은 과대적합을 막아 주는 아주 좋은 기법이다
+
+# 케라느에서는 드롭아웃을 keras.layers 패키지 아래 Dropout 클래스로 제공
+# 어떤 층의 뒤에 드롭아웃을 두어 이 층의 출력을 랜덤하게 0으로 만든다
+# 드롭아웃이 층처럼 사용되지만 훈련되는 모델 파라미터는 없다
+
+# 30%정도를 드롭아웃하는 모델 생성
+model = model_fn(keras.layers.Dropout(0.3))
+model.summary()
+# Model: "sequential_13"
+# _________________________________________________________________
+#  Layer (type)                Output Shape              Param #   
+# =================================================================
+#  flatten_13 (Flatten)        (None, 784)               0         
+                                                                 
+#  dense_26 (Dense)            (None, 100)               78500     
+                                                                 
+#  dropout (Dropout)           (None, 100)               0         
+                                                                 
+#  dense_27 (Dense)            (None, 10)                1010      
+                                                                 
+# =================================================================
+# Total params: 79510 (310.59 KB)
+# Trainable params: 79510 (310.59 KB)
+# Non-trainable params: 0 (0.00 Byte)
+# _________________________________________________________________
+
+# 은닉층 뒤에 추가된 드롭아웃 층은 훈련되는 모델 파리미터가 없다
+# 또한 입력과 출력의 크기가 같다 
+# 일부 뉴런의 출력을 0으로 만들지만 전체 출력 배열의 크기를 바꾸지는 않는다
+
+# 훈련이 끝난 뒤에 평가나 예측을 수행할 때는 드롭아웃을 적용하지 말아야 한다
+# 훈련된 모든 뉴런을 사용해야 올바른 예측을 수행할 수 있다
+# 텐서플로와 케라스는 모델을 평가와 예측에 사용할 때는 자동으로 드롭아웃을 적용하지 않는다
+
+# 훈련 손실과 검증 손실의 그래프를 출력
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics='accuracy')
+history = model.fit(train_scaled, train_target, epochs=20, verbose=0, validation_data=(val_scaled, val_target))
+
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['train', 'val'])
+plt.show()
+
+# 과대적합이 확실히 줄은 결과가 출력
+# 열 번째 에포크 정도에서 검증 손실의 감소가 멈추지만 크게 상승하지 않고 어느 정도 유지
+# 이 모델은 20번의 에포크 동안 훈련을 했기 때문에 결국 다시 과대적합이 되었다
+
+# 에포크 횟수 10으로 지정하고 모델 훈련
+model = model_fn(keras.layers.Dropout(0.3))
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics='accuracy')
+history = model.fit(train_scaled, train_target, epochs=10, verbose=0, validation_data=(val_scaled, val_target))
+
+# 케라스 모델은 훈련된 모델의 파라미터를 저장하는 save_weights() 메서드를 제공
+# 기본적으로 이 메서드는 텐서플로의 체크포인트 포맷으로 저장하지만 파일의 확장자가 .h5일 경우
+# HDF5 포맷으로 저장
+model.save_weights('model-weights.h5')
+
+# 모델 구조와 모델 파라미터를 함께 저장하는 save() 메서드도 제공
+# 기본적으로 이 메서드는 텐서플로의 SavedModel 포맷으로 저장하지만 파일의 확장자가 .h5일 경우
+# HDF5 포맷으로 저장
+model.save('model-whole.h5')
+
+# 저장된 모델 확인
+!ls -al *.h5
