@@ -239,4 +239,48 @@ mode.load_weights('model-weights.h5')
 # 하지만 evaluate() 메서드는 손실을 계산하기 위해 반드시 먼저 compile() 메서드를 실행해야 한다
 # 여기에서는 새로운 데이터에 대해 정확도만 계산하면 되는 상황이라고 가정
 
+# 10개 확률 중에 가장 큰 값의 인덱스를 골라 타깃 레이블과 비교하여 정확도를 계산
+import numpy as np
+val_labels = np.argmax(model.predict(val_scaled), axis=-1)
+print(np.mean(val_labels == val_target))
+# 0.88225
 
+# argmax()
+# 배열에서 가장 큰 값의 인덱스를 반환
+# axis=-1은 배열의 마지막 차원을 따라 최댓값을 고른다
+# 검증 세트는 2차원 배열이기 때문에 마지막 차원은 1이 된다
+
+# armmax()로 고른 인덱스와 타깃을 비교한다
+# 두 배열에서 각 위치의 값이 같으면 1 아니면 0이 된다
+# 이를 평균하면 정확도가 된다
+
+# 모델 전체를 파일에서 읽은 다음 검증 세트의 정확도 출력
+model = keras.models.load_model('model-whole.h5')
+model.evaluate(val_scaled, val_target)
+
+# load_model() 함수는 모델 파라미터뿐만 아니라 모델 구조와 옵티마이저 상태까지 복원
+# evaluate() 메서드를 사용 가능
+# 텐서플로 2.3에서는 load_model() 함수의 버그 때문에 compile() 메서드를 호출해야 한다
+
+# 콜백(callback)
+# 훈련 과정 중간에 어떤 작업을 수행할 수 있게 하는 객체로 keras.callbacks 패키지 아래에 있는 클래스들
+# fit() 메서드의 callbacks 매개변수에 리스트로 전달하여 사용
+# ModelCheckpoint 콜백은 기본적으로 에포크마다 모델을 저장
+# save_best_only=True 매개변수를 지정하여 가장 낮은 검증 점수를 만드는 모델을 저장할 수 있다
+
+# 저장 파일 이름을 best-model.h5로 지정한 콜백 적용
+model = model_fn(keras.layers.Dropout(0.3))
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics='accuracy')
+
+checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5', save_best_only=True)
+
+model.fit(train_scaled, train_target, epochs=20, verbose=0, validation_data=(val_scaled, val_target),
+    callbacks=[checkpoint_cb]
+)
+
+# 모델이 훈련한 후 best-model.h5에 최상의 검증 점수를 낸 모델이 저장
+# 이 모델을 다시 읽어서 예측 수행
+model = keras.models.load_model('best-model.h5')
+model.evaluate(val_scaled, val_target)
+# 375/375 [==============================] - 1s 2ms/step - loss: 0.3187 - accuracy: 0.8921
+# [0.3186511695384979, 0.8920833468437195]
