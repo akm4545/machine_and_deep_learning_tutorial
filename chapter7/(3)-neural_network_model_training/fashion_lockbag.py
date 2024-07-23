@@ -284,3 +284,51 @@ model = keras.models.load_model('best-model.h5')
 model.evaluate(val_scaled, val_target)
 # 375/375 [==============================] - 1s 2ms/step - loss: 0.3187 - accuracy: 0.8921
 # [0.3186511695384979, 0.8920833468437195]
+
+# 조기종료(early stopping)
+# 과대적합이 커지기 시작하는 에포크 횟수부터는 훈련을 계속할 필요가 없다
+# 이때 훈련을 중지하면 컴퓨터 자원과 시간을 아낄 수 있다
+# 이렇게 과대적합이 시작되기 전에 훈련을 미리 중지하는 것을 조기 종료라고 부르며
+# 딥러닝 분야에서 널리 사용한다
+
+# 조기 종료는 훈련 에포크 횟수를 제한하는 역할이지만 모델이 과대적합되는 것을 막아 주기
+# 때문에 규제 방법 중 하나로 생각할 수도 있다
+
+# 케라스는 조기 종료를 위한 EarlyStopping 콜백을 제공한다
+# 이 콜백의 patience 매개변수는 검증 점수가 향상되지 않더라도 참을 에포크 횟수로 지정한다
+# 예를 들어 patience=2로 지정하면 2번 연속 검증 점수가 향상되지 않으면 훈련을 중지한다
+# restore_best_weights 매개변수를 True로 지정하면 가장 낮은 검증 손실을 낸 모델 파라미터로 되돌린다
+
+# EarlyStopping 콜백을 ModelCheckpoint 콜백과 함께 사용하면 가장 낮은 검증 손실의 모델을
+# 파일에 저장하고 검증 손실이 다시 상승할 때 훈련을 중지할 수 있다
+# 또한 훈련을 중지한 다음 현재 모델의 파라미터를 최상의 파라미터로 되돌린다
+
+# 두 콜백을 사용한 코드
+model = model_fn(keras.layers.Dropout(0.3))
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics='accuracy')
+
+checkpoint_cb = keras.callbacks.ModelCheckpoint('best-model.h5', save_best_only=True)
+early_stopping_cb = keras.callbacks.EarlyStopping(patience=2, restore_best_weights=True)
+
+history = model.fit(train_scaled, train_target, epochs=20, verbose=0, validation_data=(val_scaled, val_target),
+    callbacks=[checkpoint_cb, early_stopping_cb]
+)
+
+# 훈련을 마치고 나면 몇 번째 에포크에서 훈련이 중지되었는지 EarlyStopping 객체의 stopped_epoch 속성에서 확인 가능
+print(early_stopping_cb.stopped_epoch)
+# 8
+
+# 에포크 횟수가 0부터 시작하기 때문에 8은 아홉 번째 에포크에서 훈련이 중지되었다는 것을 의미
+# patience를 2로 지정했으므로 최상의 모델은 일곱 번째 에포크일 것이다
+
+# 훈련 손실과 검증 손실 출력
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['train', 'val'])
+plt.show()
+
+# 조기 종료 기법을 사용하면 에포크 횟수를 크게 지정해도 괜찮다
+
+
