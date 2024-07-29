@@ -95,3 +95,45 @@ keras.utils.plot_model(model)
 # to_file 매개변수에 파일 이름을 지정하면 출력한 이미지를 파일로 저장한다
 # dpi 매개변수로 해상도를 지정할 수도 있다
 keras.utils.plot_model(model, show_shapes=True)
+
+# 케라스 API의 장점은 딥러닝 모델의 종류나 구성 방식에 상관없이 컴파일 훈련 과정이
+# 같다는 점이다
+
+# Adam 옵티마이저 사용, ModelCheckpoint 콜백, EarlyStopping 콜백을 사용하여 조기 종료 기법 구현
+model.compile(optimizer='adam', loss='sparse_categorical_crossentropy', metrics='accuracy')
+checkpoint_cb = keras.callbacks.ModelCheckpoint('best-cnn-model.h5', save_best_only=True)
+early_stopping_cb = keras.callbacks.EarlyStopping(patience=2, restore_best_weights=True)
+
+history = model.fit(train_scaled, train_target, epochs=20, validation_data=(val_scaled, val_target), callbacks=[checkpoint_cb, early_stopping_cb])
+# Epoch 1/20
+# 1500/1500 [==============================] - 88s 56ms/step - loss: 0.5236 - accuracy: 0.8124 - val_loss: 0.3407 - val_accuracy: 0.8774
+# Epoch 2/20
+#    3/1500 [..............................] - ETA: 52s - loss: 0.3951 - accuracy: 0.8542/usr/local/lib/python3.10/dist-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
+#   saving_api.save_model(
+# 1500/1500 [==============================] - 70s 46ms/step - loss: 0.3467 - accuracy: 0.8750 - val_loss: 0.2751 - val_accuracy: 0.8943
+# Epoch 3/20
+# 1500/1500 [==============================] - 68s 45ms/step - loss: 0.2971 - accuracy: 0.8931 - val_loss: 0.2540 - val_accuracy: 0.9049
+# Epoch 4/20
+# 1500/1500 [==============================] - 66s 44ms/step - loss: 0.2628 - accuracy: 0.9053 - val_loss: 0.2391 - val_accuracy: 0.9137
+# Epoch 5/20
+# 1500/1500 [==============================] - 69s 46ms/step - loss: 0.2402 - accuracy: 0.9122 - val_loss: 0.2520 - val_accuracy: 0.9094
+# Epoch 6/20
+# 1500/1500 [==============================] - 67s 44ms/step - loss: 0.2215 - accuracy: 0.9188 - val_loss: 0.2411 - val_accuracy: 0.9126
+
+# 훈련 세트의 정확도가 이전보다 훨씬 좋아졌다
+
+# 손실 그래프를 그려서 조기 종료가 잘 이루어졌는지 확인
+import matplotlib.pyplot as plt
+
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['train', 'val'])
+plt.show()
+
+# EarlyStopping 클래스의 restore_best_weights 매개변수를 True로 지정했으므로
+# 현재 model 객체가 최적의 모델 파라미터로 복원되어 있다
+
+# 검증 세트 성능 평가
+model.evaluate(val_scaled, val_target)
