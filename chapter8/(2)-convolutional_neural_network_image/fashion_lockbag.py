@@ -106,19 +106,23 @@ early_stopping_cb = keras.callbacks.EarlyStopping(patience=2, restore_best_weigh
 
 history = model.fit(train_scaled, train_target, epochs=20, validation_data=(val_scaled, val_target), callbacks=[checkpoint_cb, early_stopping_cb])
 # Epoch 1/20
-# 1500/1500 [==============================] - 88s 56ms/step - loss: 0.5236 - accuracy: 0.8124 - val_loss: 0.3407 - val_accuracy: 0.8774
+# 1500/1500 [==============================] - 71s 47ms/step - loss: 0.5255 - accuracy: 0.8123 - val_loss: 0.3257 - val_accuracy: 0.8801
 # Epoch 2/20
-#    3/1500 [..............................] - ETA: 52s - loss: 0.3951 - accuracy: 0.8542/usr/local/lib/python3.10/dist-packages/keras/src/engine/training.py:3103: UserWarning: You are saving your model as an HDF5 file via `model.save()`. This file format is considered legacy. We recommend using instead the native Keras format, e.g. `model.save('my_model.keras')`.
-#   saving_api.save_model(
-# 1500/1500 [==============================] - 70s 46ms/step - loss: 0.3467 - accuracy: 0.8750 - val_loss: 0.2751 - val_accuracy: 0.8943
+# 1500/1500 [==============================] - 68s 45ms/step - loss: 0.3478 - accuracy: 0.8739 - val_loss: 0.2773 - val_accuracy: 0.8961
 # Epoch 3/20
-# 1500/1500 [==============================] - 68s 45ms/step - loss: 0.2971 - accuracy: 0.8931 - val_loss: 0.2540 - val_accuracy: 0.9049
+# 1500/1500 [==============================] - 73s 49ms/step - loss: 0.2994 - accuracy: 0.8921 - val_loss: 0.2548 - val_accuracy: 0.9067
 # Epoch 4/20
-# 1500/1500 [==============================] - 66s 44ms/step - loss: 0.2628 - accuracy: 0.9053 - val_loss: 0.2391 - val_accuracy: 0.9137
+# 1500/1500 [==============================] - 72s 48ms/step - loss: 0.2702 - accuracy: 0.9007 - val_loss: 0.2412 - val_accuracy: 0.9093
 # Epoch 5/20
-# 1500/1500 [==============================] - 69s 46ms/step - loss: 0.2402 - accuracy: 0.9122 - val_loss: 0.2520 - val_accuracy: 0.9094
+# 1500/1500 [==============================] - 69s 46ms/step - loss: 0.2439 - accuracy: 0.9103 - val_loss: 0.2410 - val_accuracy: 0.9092
 # Epoch 6/20
-# 1500/1500 [==============================] - 67s 44ms/step - loss: 0.2215 - accuracy: 0.9188 - val_loss: 0.2411 - val_accuracy: 0.9126
+# 1500/1500 [==============================] - 67s 45ms/step - loss: 0.2230 - accuracy: 0.9180 - val_loss: 0.2351 - val_accuracy: 0.9158
+# Epoch 7/20
+# 1500/1500 [==============================] - 71s 47ms/step - loss: 0.2069 - accuracy: 0.9236 - val_loss: 0.2218 - val_accuracy: 0.9175
+# Epoch 8/20
+# 1500/1500 [==============================] - 71s 47ms/step - loss: 0.1919 - accuracy: 0.9285 - val_loss: 0.2252 - val_accuracy: 0.9196
+# Epoch 9/20
+# 1500/1500 [==============================] - 76s 51ms/step - loss: 0.1777 - accuracy: 0.9323 - val_loss: 0.2291 - val_accuracy: 0.9175
 
 # 훈련 세트의 정확도가 이전보다 훨씬 좋아졌다
 
@@ -137,3 +141,51 @@ plt.show()
 
 # 검증 세트 성능 평가
 model.evaluate(val_scaled, val_target)
+# 375/375 [==============================] - 5s 12ms/step - loss: 0.2218 - accuracy: 0.9175
+# [0.22181083261966705, 0.9175000190734863]
+
+# predict() 메서드를 사용해 새로운 데이터에 대한 예측을 만들기
+# 검증 세트의 첫 번째 샘플을 처음 본 이미지라고 가정
+
+# 첫 번째 샘플 이미지 출력
+plt.imshow(val_scaled[0].reshape(28, 28), cmap='gray_r')
+plt.show()
+# 핸드백 이미지
+
+# 예측 확률 출력
+preds = model.predict(val_scaled[0:1])
+print(preds)
+# [[2.2905691e-11 6.5928788e-15 5.3693714e-13 1.6925417e-12 2.0883654e-11
+#   1.5328136e-11 7.3311496e-11 6.5840389e-13 1.0000000e+00 2.7428997e-12]]
+
+# 케라스의 fit(), predict(), evaluate() 메서드 모두 입력의 첫 번째 차원이 배치 차원일 것으로 기대한다
+# 따라서 샘플 하나를 전달할 때 (28, 28, 1)이 아니라 (1, 28, 28, 1)크기를 전달해야 한다
+# 배열 슬라이싱은 인덱싱과 다르게 선택된 요소가 하나이더라도 전체 차원이 유지되어 (1, 28, 28, 1) 크기를 만든다
+
+# 출력 결과를 보면 아홉 번째 값이 1이고 다른 값은 거의 0에 가깝다
+
+# 막대 그래프로 출력
+plt.bar(range(1, 11), preds[0])
+plt.xlabel('class')
+plt.ylabel('prob.')
+plt.show()
+
+# 파이썬에서 레이블을 다루기 위해 리스트로 저장
+classes = ['티셔츠', '바지', '스웨터', '드레스', '코트', '샌달', '셔츠', '스니커즈', '가방', '앵클 부츠']
+
+# 클래스 리스트가 있으면 레이블을 출력하기 쉽다
+# preds 배열에서 가장 큰 인덱스를 찾아 classes 리스트의 인덱스로 사용하면 된다
+import numpy as np
+print(classes[np.argmax(preds)])
+# 가방
+
+# 테스트 세트로 합성곱 신경망의 일반화 성능 측정
+# 즉 이 모델을 실전에 투입했을 때 얻을 수 잇는 예상 성능 측정
+
+# 픽셀값 전처리
+test_scaled = test_input.reshape(-1, 28, 28, 1) / 255.0
+model.evaluate(test_scaled, test_target)
+# 313/313 [==============================] - 5s 14ms/step - loss: 0.2381 - accuracy: 0.9148
+# [0.23806720972061157, 0.9147999882698059]
+
+# 실전 투입 시 91%의 성능을 기대할 수 있다
