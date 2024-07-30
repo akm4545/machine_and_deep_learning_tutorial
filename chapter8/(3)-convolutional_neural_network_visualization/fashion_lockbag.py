@@ -117,4 +117,82 @@ plt.show()
 # 합성곱 신경망의 학습을 시각화하는 두 번째 방법은 합성곱 층에서 출력된 특성 맵을 그려 보는 것이다
 # 이를 통해 입력 이미지를 신경망 층이 어떻게 바로지는지 엿볼 수 있다
 
-# 함수형 API
+# 함수형 API (functional API)
+# 딥러닝에서는 좀 더 복잡한 모델이 많이 있다
+# 예를 들어 입력이 2개일 수도 있고 출력이 2개일 수도 있다
+# 이런 경우 Sequential 클래스를 사용하기 어렵다
+# 대신 함수형 API를 사용한다
+
+# 함수형 API는 케리사의 Model 클래스를 사용하여 모델을 만든다
+
+# Dense층 2개로 이루어진 완전 연결 신경망을 함수형 API로 구현
+# 2개의 Dense 층 객체 생성
+dense1 = keras.layers.Dense(100, activation='sigmoid')
+dense2 = keras.layers.Dense(10, activation='softmax')
+
+# 이 객체를 Sequential 클래스 객체의 add 메서드에 전달할 수 있다
+# 하지만 다음과 같이 함수처럼 호출할 수도 있다
+hidden = dense1(inputs)
+
+# 파이썬의 모든 객체는 호출 가능하다
+# 케라스의 층은 객체를 함수처럼 호출했을 때 적절히 동작할 수 있도록 미리 준비해 놓았다
+# 해당 코드를 실행하면 입력값 inputs를 Dense 층을 통과시킨 후 출력값 hidden을 만든다
+
+# 두 번째 층 호출 - 첫 번째 층의 출력을 입력으로 사용
+outputs = dense2(hidden)
+
+# inputs와 outputs을 Model 클래스로 연결
+model = keras.Model(inputs, outputs)
+
+# 입력에서 출력까지 층을 호출한 결과를 계속 이어주고 Model 클래스에 입력과 최종 출력을 지정한다
+# Sequential 클래스는 InputLayer 클래스를 자동으로 추가하고 호출해 주지만 Model 클래스에서는
+# 수동으로 만들어서 호출해야 한다 
+# inputs가 InputLayer 클래스의 출력값이 되어야 한다
+
+# 케라스는 InputLayer 클래스 객체를 쉽게 다룰 수 있도록 Input 함수를 별도로 제공
+# 입력의 크기를 지정하는 shape 매개변수와 함께 이 함수를 호출하면 InputLayer 클래스 객체를
+# 만들어 출력을 반환
+inputs = keras.Input(shape=(784,))
+
+# 이렇게 모델을 만들게 되면 중간에 다양한 형태로 층을 연결할 수 있다
+
+# model 객체의 predict 메서드를 호출하면 입력부터 마지막 층까지 모든 계산을 수행한 후
+# 최종 출력을 반환
+# 필요한 데이터가 첫 번쨰 Conv2D층이 출력한 특성 맵이다
+# 첫 번째 층의 출력은 Conv2D 객체의 output 속성에서 얻을 수 있다
+# model.layers[0].output처럼 참초 가능
+
+# model 객체의 입력은 input 속성으로 입력을 참조할 수 있다
+print(model.input)
+# KerasTensor(type_spec=TensorSpec(shape=(None, 28, 28, 1), dtype=tf.float32, name='conv2d_input'), name='conv2d_input', description="created by layer 'conv2d_input'")
+
+# model.input과 model.layers[0].output을 연결하는 모델 생성
+conv_acti = keras.Model(model.input, model.layers[0].output)
+
+# model 객체의 predict 메서드를 호출하면 최종 출력층의 확률을 반환한다
+# conv_acti의 predict 메서드를 호출하면 첫 번째 Conv2D의 출력을 반환할 것이다
+
+# 케라스로 패션 MNIST 데이터셋을 읽은 후 훈련 세트에 있는 첫 번째 샘플 출력
+(train_input, train_target), (test_input, test_target) = keras.datasets.fashion_mnist.load_data()
+plt.imshow(train_input[0], cmap='gray_r')
+plt.show()
+
+# 이 샘플을 conv_acti 모델에 주입하여 Conv2D 층이 만드는 특성 맵 출력
+# predict 메서드는 항상 입력의 첫 번째 차원이 배치 차원일 것으로 기대하므로 
+# 샘플 전달 전 차원을 유지해야 한다 작업 후 전처리
+inputs = train_input[0:1].reshape(-1, 28, 28, 1) / 255.0
+feature_maps = conv_acti.predict(inputs)
+
+# predict 메서드가 출력한 크기 확인
+print(feature_maps.shape)
+# (1, 28, 28, 32)
+# 세임 패딩과 32개의 필터를 사용한 합성곱 층의 출력이므로 (28, 28, 32)이다
+
+# 맷플롯립의 imshow 함수로 특성 맵 출력
+# 총 32개의 특성 맵을 4개의 행으로 나누어 출력
+fig, axs = plt.subplots(4, 8, figsize=(15, 8))
+for i in range(4):
+    for j in range(8):
+        axs[i, j].imshow(feature_maps[0,:,:,i * 8 + j])
+        axs[i, j].axis('off')
+plt.show()
