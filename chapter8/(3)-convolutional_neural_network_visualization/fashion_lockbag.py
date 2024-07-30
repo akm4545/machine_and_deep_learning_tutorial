@@ -85,3 +85,36 @@ no_training_model.add(keras.layers.Conv2D(32, kernel_size=3, activation='relu', 
 # 모델의 첫 번째 층(Conv2D)의 가중치를 no_training_conv 변수에 저장
 no_training_conv = no_training_model.layers[0]
 print(no_training_conv.weights[0].shape)
+# (3, 3, 1, 32)
+
+# 가중치의 평균과 표춘편차 출력
+no_training_weights = no_training_conv.weights[0].numpy()
+print(no_training_weights.mean(), no_training_weights.std())
+# 0.0014820709 0.08248861
+
+# 평균은 0에 가깝지만 표준편차는 이전과 달리 매우 작다
+
+# 가중치 배열을 히스토그램으로 출력
+plt.hist(no_training_weights.reshape(-1, 1))
+plt.xlabel('weight')
+plt.ylabel('count')
+plt.show()
+
+# 출력 결과 대부분의 가중치가 -0.15~0.15 사이에 있고 비교적 고른 분포를 보인다
+# 이런 이유는 텐서플로가 신경망의 가중치를 처음 초기화할 때 균등 분포에서 랜덤하게 값을 선택하기 때문이다
+
+# 가중치 값을 맷플롯립의 imshow 함수를 사용해 그림으로 출력
+# 학습 가중치와 비교하기 위해 동일하게 vmin과 vmax를 -0.5와 0.5로 설정
+
+fig, axs = plt.subplots(2, 16, figsize=(15, 2))
+for i in range(2):
+    for j in range(16):
+        axs[i, j].imshow(no_training_weights[:,:,0,i * 16 + j], vmin=-0.5, vmax=0.5)
+        axs[i, j].axis('off')
+plt.show()
+
+# 가중치가 밋밋하게 초기화되었다
+# 합성곱 신경망의 학습을 시각화하는 두 번째 방법은 합성곱 층에서 출력된 특성 맵을 그려 보는 것이다
+# 이를 통해 입력 이미지를 신경망 층이 어떻게 바로지는지 엿볼 수 있다
+
+# 함수형 API
