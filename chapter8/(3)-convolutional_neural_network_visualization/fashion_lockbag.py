@@ -163,7 +163,7 @@ inputs = keras.Input(shape=(784,))
 # model.layers[0].output처럼 참초 가능
 
 # model 객체의 입력은 input 속성으로 입력을 참조할 수 있다
-print(model.input)
+print(model.inputs)
 # KerasTensor(type_spec=TensorSpec(shape=(None, 28, 28, 1), dtype=tf.float32, name='conv2d_input'), name='conv2d_input', description="created by layer 'conv2d_input'")
 
 # model.input과 model.layers[0].output을 연결하는 모델 생성
@@ -196,3 +196,26 @@ for i in range(4):
         axs[i, j].imshow(feature_maps[0,:,:,i * 8 + j])
         axs[i, j].axis('off')
 plt.show()
+
+# 두 번째 합성곱 층이 만든 특성 맵 확인을 위한 모델 생성
+# model 객체의 입력과 두 번째 합성곱 층인 model.layers[2]의 출력을 연결한 conv2_acti 모델 생성
+conv2_acti = keras.Model(model.inputs, model.layers[2].output)
+
+# 첫 번째 샘플을 conv2_acti 모델의 predict() 메서드에 전달
+inputs = train_input[0:1].reshape(-1, 28, 28, 1) / 255.0
+feature_maps = conv2_acti.predict(inputs)
+
+print(feature_maps.shape)
+# (1, 14, 14, 64)
+# 첫 번째 풀링 층에서 가로세로 크기가 절반으로 줄고 두 번째 합성곱 층의 필터 개수는 64개
+
+# 64개의 특성 맵을 8개씩 나누어 imshow() 함수로 출력
+fig, axs = plt.subplots(8, 8, figsize=(12, 12))
+for i in range(8):
+    for j in range(8):
+        axs[i, j].imshow(feature_maps[0,:,:,i * 8 + j])
+        axs[i, j].axis('off')
+plt.show()
+
+# 합성곱 신경망의 앞부분에 있는 합성곱 층은 이미지의 시각적인 정보를 감지하고
+# 뒤쪽에 있는 합성곱 층은 앞쪽에서 감지한 시각적인 정보를 바탕으로 추상적인 정보를 학습
