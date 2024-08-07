@@ -170,3 +170,24 @@ print(train_seq[5])
 # 검증 세트의 길이도 100으로 제한
 val_seq = pad_sequences(val_input, maxlen=100)
 
+# 케라스는 여러 종류의 순환층 클래스를 제공한다
+# 구중에 가장 간단한 것은 SimpleRNN 클래스이다
+# IMDB 리뷰 분류 문제는 이진 분류이므로 마지막 출력층은 1개의 뉴런을 가지고 시그모이드 활성화 함수를
+# 사용해야 한다
+from tensorflow import keras
+
+model = keras.Sequential()
+model.add(keras.layers.SimpleRNN(8, input_shape=(100, 300)))
+model.add(keras.layers.Dense(1, activation='sigmoid'))
+
+# SimpleRNN의 첫 번째 매개변수에는 사용할 뉴런의 개수를 지정
+# input_shape에 입력 차원을 (100, 300)으로 지정
+# 첫 번째 차원이 100인것은 샘플의 길이를 100으로 지정했기 때문이다
+
+# 순환층도 활성화 함수를 사용해야 한다
+# SimpleRNN 클래스의 activation 매개변수의 기본값은 tanh로 하이퍼볼릭 탄젠트 함수를 사용
+
+# 전처리를 거친 데이터에는 한 가지 큰 문제가 있다
+# 토큰을 정수로 변환한 데이터를 신경망에 주입하면 큰 정수가 큰 활성화 출력을 만든다
+# 하지만 정수 사이에는 어떤 관련이 없다
+# 20번 토큰을 10번 토큰보다 더 중요시해야 할 이유가 없다
