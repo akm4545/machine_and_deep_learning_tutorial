@@ -255,3 +255,26 @@ model.summary()
 # 이 은닉 상태도 순환층의 뉴런과 완전히 연결되기 떄문에 8(은닉 상태 크기) * 8(뉴런 개수) = 64개의 가중치가 필요하다
 # 마지막으로 뉴런마다 하나의 절편이 있다 
 # 따라서 모두 2400 + 64 + 8 = 2472개의 모델 파라미터가 필요하다
+
+# 기본 RMSprop의 학습률 0.001을 사용하지 않기 위해 별도의 RMSprop 객체를 
+# 만들어 학습률을 0.0001로 지정 
+# 에포크 횟수를 100으로 늘리고 배치 크기는 64개로 설정
+rmsprop = keras.optimizers.RMSprop(learning_rate=1e-4)
+model.compile(optimizer=rmsprop, loss='binary_crossentropy', metrics=['accuracy'])
+# checkpoint_cb = keras.callbacks.ModelCheckpoint('best-simplernn-model.h5', save_best_only=True)
+# 케라스 버전 변경으로 인한 변경
+checkpoint_cb = keras.callbacks.ModelCheckpoint('best-simplernn-model.keras', save_best_only=True)
+early_stopping_cb = keras.callbacks.EarlyStopping(patience=3, restore_best_weights=True)
+
+history = model.fit(
+    train_oh, 
+    train_target, 
+    epochs=100, 
+    # batch_size=64,
+    # colab 램 리소스 이슈
+    # 배치 사이즈 줄여도 해결되지 않음 
+    # 학습 데이터 줄여야 할것 같음
+    batch_size=32, 
+    validation_data=(val_oh, val_target),
+    callbacks=[checkpoint_cb, early_stopping_cb]
+)
