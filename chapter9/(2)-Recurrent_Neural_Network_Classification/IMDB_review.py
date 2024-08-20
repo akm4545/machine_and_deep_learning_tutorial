@@ -278,3 +278,221 @@ history = model.fit(
     validation_data=(val_oh, val_target),
     callbacks=[checkpoint_cb, early_stopping_cb]
 )
+
+# 코랩 자원 이슈로 토큰 개수 70개로 줄임
+# Epoch 1/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 12s 16ms/step - accuracy: 0.5101 - loss: 0.7092 - val_accuracy: 0.5324 - val_loss: 0.6940
+# Epoch 2/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 10s 17ms/step - accuracy: 0.5351 - loss: 0.6908 - val_accuracy: 0.5540 - val_loss: 0.6860
+# Epoch 3/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 10s 17ms/step - accuracy: 0.5571 - loss: 0.6834 - val_accuracy: 0.6070 - val_loss: 0.6654
+# Epoch 4/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 11s 17ms/step - accuracy: 0.6093 - loss: 0.6588 - val_accuracy: 0.6374 - val_loss: 0.6395
+# Epoch 5/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 20s 17ms/step - accuracy: 0.6504 - loss: 0.6282 - val_accuracy: 0.6614 - val_loss: 0.6213
+# Epoch 6/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 23s 21ms/step - accuracy: 0.6743 - loss: 0.6111 - val_accuracy: 0.6800 - val_loss: 0.6053
+# Epoch 7/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 19s 18ms/step - accuracy: 0.6893 - loss: 0.5976 - val_accuracy: 0.6888 - val_loss: 0.5929
+# Epoch 8/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 19s 17ms/step - accuracy: 0.7025 - loss: 0.5809 - val_accuracy: 0.7022 - val_loss: 0.5819
+# Epoch 9/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 19s 14ms/step - accuracy: 0.7083 - loss: 0.5761 - val_accuracy: 0.7072 - val_loss: 0.5751
+# Epoch 10/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 11s 17ms/step - accuracy: 0.7192 - loss: 0.5642 - val_accuracy: 0.7136 - val_loss: 0.5702
+# Epoch 11/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 20s 16ms/step - accuracy: 0.7240 - loss: 0.5584 - val_accuracy: 0.7132 - val_loss: 0.5621
+# Epoch 12/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 9s 14ms/step - accuracy: 0.7319 - loss: 0.5482 - val_accuracy: 0.7210 - val_loss: 0.5560
+# Epoch 13/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 12s 17ms/step - accuracy: 0.7271 - loss: 0.5507 - val_accuracy: 0.7218 - val_loss: 0.5522
+# Epoch 14/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 20s 17ms/step - accuracy: 0.7307 - loss: 0.5454 - val_accuracy: 0.7244 - val_loss: 0.5478
+# Epoch 15/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 20s 17ms/step - accuracy: 0.7375 - loss: 0.5381 - val_accuracy: 0.7268 - val_loss: 0.5452
+# Epoch 16/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 21s 17ms/step - accuracy: 0.7379 - loss: 0.5359 - val_accuracy: 0.7218 - val_loss: 0.5440
+# Epoch 17/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 9s 14ms/step - accuracy: 0.7403 - loss: 0.5320 - val_accuracy: 0.7316 - val_loss: 0.5421
+# Epoch 18/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 11s 15ms/step - accuracy: 0.7451 - loss: 0.5311 - val_accuracy: 0.7242 - val_loss: 0.5408
+# Epoch 19/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 11s 17ms/step - accuracy: 0.7437 - loss: 0.5260 - val_accuracy: 0.7288 - val_loss: 0.5372
+# Epoch 20/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 20s 16ms/step - accuracy: 0.7506 - loss: 0.5181 - val_accuracy: 0.7298 - val_loss: 0.5363
+# Epoch 21/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 9s 15ms/step - accuracy: 0.7460 - loss: 0.5219 - val_accuracy: 0.7296 - val_loss: 0.5357
+# Epoch 22/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 11s 17ms/step - accuracy: 0.7482 - loss: 0.5203 - val_accuracy: 0.7360 - val_loss: 0.5355
+# Epoch 23/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 12s 20ms/step - accuracy: 0.7451 - loss: 0.5264 - val_accuracy: 0.7364 - val_loss: 0.5324
+# Epoch 24/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 19s 17ms/step - accuracy: 0.7508 - loss: 0.5201 - val_accuracy: 0.7364 - val_loss: 0.5329
+# Epoch 25/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 11s 17ms/step - accuracy: 0.7536 - loss: 0.5163 - val_accuracy: 0.7352 - val_loss: 0.5320
+# Epoch 26/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 19s 14ms/step - accuracy: 0.7463 - loss: 0.5197 - val_accuracy: 0.7350 - val_loss: 0.5318
+# Epoch 27/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 11s 17ms/step - accuracy: 0.7472 - loss: 0.5194 - val_accuracy: 0.7370 - val_loss: 0.5296
+# Epoch 28/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 11s 17ms/step - accuracy: 0.7480 - loss: 0.5176 - val_accuracy: 0.7370 - val_loss: 0.5295
+# Epoch 29/100
+# 625/625 ━━━━━━━━━━━━━━━━━━━━ 11s 17ms/step - accuracy: 0.7519 - loss: 0.5129 - val_accuracy: 0.7370 - val_loss: 0.5282
+# Epoch 30/100
+# 책 예제에서는 80%의 정확도
+
+# 매우 뛰어난 성능은 아니지만 감상평을 분류하는 데 어느 정도 성과를 내고 있다고 판단할 수 있다
+
+# 훈련 손실과 검증 손실을 그래프로 출력
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['train', 'val'])
+plt.show()
+
+# 훈련 손실은 꾸준히 감소하고 있지만 검증 손실은 대략 스무 번째 에포크에서 감소가 둔해지고 있다
+
+# 순환 신경망을 훈련시켜서 IMDB 리뷰 데이터를 긍정과 부정으로 분류하는 작업을 위해
+# 입력 데이터를 원-핫 인코딩으로 변환했다
+# 원-핫 인코딩의 단점은 입력 데이터가 엄청 커진다는 것이다
+
+# train_seq 배열과 train_oh 배열의 nbytes 속성 출력 
+print(train_seq.nbytes, train_oh.nbytes)
+
+# 토큰 1개를 300차원으로 늘렸기 때문에 대략 300배가 커진다
+# 이는 훈련 데이터가 커질수록 더 문제가 된다
+
+# 단어 임베딩(word embedding)
+# 순환 신경망에서 텍스트를 처리할 때 즐겨 사용하는 방법
+# 단어 임베딩은 각 단어를 고정된 크기의 실수 벡터로 바꾸어 준다
+
+# 예시 
+# Cat의 단어 임베딩 벡터
+# [0.2, 0.1, 1.3, 0.8, 0.2, 0.4, 1.1, 0.9, 0.2, 0.1]
+
+# 단어 임베딩으로 만들어진 벡터는 원-핫 인코딩된 벡터보다 훨씬 의미 있는 값으로
+# 채워져 있기 떄문에 자연어 처리에서 더 좋은 성능을 내는 경우가 많다
+# 단어 임베딩 벡터를 만드는 층은 케라스의 kerasa.layers 패키지 아래 Embedding 클래스로 임베딩 기능 제공
+# 이 클래스를 다른 층처럼 모델에 추가하면 처음에는 모든 벡터가 랜덤하게 초기화되지만 훈련을
+# 통해 데이터에서 좋은 단어 임베딩을 학습한다
+
+# 단어 임베딩의 장점은 입력으로 정수 데이터를 받는다는 것이다
+# 즉 원-핫 인코딩으로 변경된 train_oh 배열이 아니라 train_seq를 사용할 수 있다
+# 이 때문에 메모리를 훨씬 효율적으로 사용할 수 있다
+
+# 원-핫 인코딩은 샘플 하나를 300차원으로 늘렸기 떄문에 (100, ) 크기의 샘플이
+# (100, 300)으로 커졌다
+# 이와 비슷하게 임베딩도 (100, ) 크기의 샘플을 (100, 20)과 같이 2차원 배열로 늘린다
+# 원-핫 인코딩과는 달리 훨씬 작은 크기로도 단어를 잘 표현할 수 있다
+
+# Embedding 클래스를 SimpleRNN 층 앞에 추가한 신경망 생성
+model2 = keras.Sequential()
+model2.add(keras.layers.Embedding(300, 16, input_length=100))
+model2.add(keras.layers.SimpleRNN(8))
+model2.add(keras.layers.Dense(1, activation='sigmoid'))
+
+# Embedding 클래스의 첫 번째 매개변수(300)는 어휘 사전의 크기이다
+# 앞서 데이터셋에서 300개의 단어만 사용하도록 imdb.load_data(num_words=300)과 같이 
+# 설정했기 때문에 이 매개변수의 값을 300으로 지정한다
+
+# 두 번째 매개변수(16)는 임베딩 벡터의 크기다
+
+# 세 번쨰 input_length 매개변수는 입력 시퀀스의 길이이다 
+# 앞서 샘플의 길이를 100으로 맞추어 train_seq를 만들었다 따라서 이 값은 100이다
+
+# 모델 구조 
+model2.summary()
+# Model: "sequential_3"
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+# ┃ Layer (type)                         ┃ Output Shape                ┃         Param # ┃
+# ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+# │ embedding (Embedding)                │ ?                           │         4800    │
+# ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+# │ simple_rnn_3 (SimpleRNN)             │ ?                           │     0 (unbuilt) │
+# ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+# │ dense_3 (Dense)                      │ ?                           │     0 (unbuilt) │
+# └──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+#  Total params: 0 (0.00 B)
+#  Trainable params: 0 (0.00 B)
+#  Non-trainable params: 0 (0.00 B)
+
+# Embedding 클래스는 300개의 각 토큰을 크기가 16인 벡터로 변경하기 때문에 300 * 16 = 4800개의 모델 파라미터를 가진다
+# SimpleRNN 층은 임베딩 벡터의 크기가 16이므로 8개의 뉴련과 곱하기 위해 필요한 가중치 16 * 8 = 128개를 가진다
+# 또한 은닉 상태에 곱해지는 가중치 8 * 8 = 64개가 있다
+# 마지막으로 8개의 절편이 있므므로 이 순환층에 있는 전체 모델 파라미터의 개수는 128 + 64 + 8 = 200개이다
+# 마지막 Dense 층의 가중치 개수는 이전과 동일하게 9개이다
+
+# 원-핫 인코딩보다 SimpleRNN에 주입되는 입력의 크기가 크게 줄었지만 임베딩 벡터는 단어를 잘 표현하는 
+# 능력이 있기 때문에 훈련 결과는 이전보다 좋을 것이다
+
+# 모델 훈련
+rmsprop = keras.optimizers.RMSprop(learning_rate=1e-4)
+model2.compile(optimizer=rmsprop, loss='binary_crossentropy', metrics=['accuracy'])
+checkpoint_cb = keras.callbacks.ModelCheckpoint('best-embedding-model.keras', save_best_only=True)
+early_stopping_cb = keras.callbacks.EarlyStopping(patience=3, restore_best_weights=True)
+
+history = model2.fit(
+    train_seq, train_target, 
+    epochs=100, batch_size=64, 
+    validation_data=(val_seq, val_target)
+    callbacks=[checkpoint_cb, early_stopping_cb]
+)
+# Epoch 1/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 10s 24ms/step - accuracy: 0.5125 - loss: 0.6950 - val_accuracy: 0.5808 - val_loss: 0.6814
+# Epoch 2/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 9s 30ms/step - accuracy: 0.6068 - loss: 0.6741 - val_accuracy: 0.6474 - val_loss: 0.6596
+# Epoch 3/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 10s 28ms/step - accuracy: 0.6544 - loss: 0.6537 - val_accuracy: 0.6808 - val_loss: 0.6396
+# Epoch 4/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 9s 23ms/step - accuracy: 0.6902 - loss: 0.6338 - val_accuracy: 0.6784 - val_loss: 0.6291
+# Epoch 5/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 11s 24ms/step - accuracy: 0.7067 - loss: 0.6142 - val_accuracy: 0.6682 - val_loss: 0.6252
+# Epoch 6/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 12s 29ms/step - accuracy: 0.7244 - loss: 0.5986 - val_accuracy: 0.7252 - val_loss: 0.5921
+# Epoch 7/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 12s 35ms/step - accuracy: 0.7331 - loss: 0.5824 - val_accuracy: 0.7366 - val_loss: 0.5747
+# Epoch 8/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 8s 25ms/step - accuracy: 0.7404 - loss: 0.5694 - val_accuracy: 0.7270 - val_loss: 0.5704
+# Epoch 9/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 10s 24ms/step - accuracy: 0.7504 - loss: 0.5553 - val_accuracy: 0.7448 - val_loss: 0.5558
+# Epoch 10/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 12s 29ms/step - accuracy: 0.7507 - loss: 0.5463 - val_accuracy: 0.7434 - val_loss: 0.5475
+# Epoch 11/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 10s 31ms/step - accuracy: 0.7570 - loss: 0.5338 - val_accuracy: 0.7340 - val_loss: 0.5523
+# Epoch 12/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 8s 24ms/step - accuracy: 0.7494 - loss: 0.5357 - val_accuracy: 0.7328 - val_loss: 0.5426
+# Epoch 13/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 10s 24ms/step - accuracy: 0.7612 - loss: 0.5215 - val_accuracy: 0.7474 - val_loss: 0.5317
+# Epoch 14/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 12s 29ms/step - accuracy: 0.7585 - loss: 0.5190 - val_accuracy: 0.7368 - val_loss: 0.5411
+# Epoch 15/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 10s 30ms/step - accuracy: 0.7638 - loss: 0.5119 - val_accuracy: 0.7488 - val_loss: 0.5240
+# Epoch 16/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 7s 23ms/step - accuracy: 0.7633 - loss: 0.5099 - val_accuracy: 0.7452 - val_loss: 0.5226
+# Epoch 17/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 9s 30ms/step - accuracy: 0.7673 - loss: 0.5023 - val_accuracy: 0.7350 - val_loss: 0.5278
+# Epoch 18/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 11s 32ms/step - accuracy: 0.7648 - loss: 0.5014 - val_accuracy: 0.7466 - val_loss: 0.5214
+# Epoch 19/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 8s 24ms/step - accuracy: 0.7683 - loss: 0.4992 - val_accuracy: 0.7538 - val_loss: 0.5181
+# Epoch 20/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 11s 27ms/step - accuracy: 0.7675 - loss: 0.4990 - val_accuracy: 0.7540 - val_loss: 0.5159
+# Epoch 21/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 9s 30ms/step - accuracy: 0.7732 - loss: 0.4898 - val_accuracy: 0.7526 - val_loss: 0.5157
+# Epoch 22/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 7s 24ms/step - accuracy: 0.7695 - loss: 0.4922 - val_accuracy: 0.7514 - val_loss: 0.5149
+# Epoch 23/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 9s 30ms/step - accuracy: 0.7675 - loss: 0.4947 - val_accuracy: 0.7506 - val_loss: 0.5191
+# Epoch 24/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 9s 29ms/step - accuracy: 0.7750 - loss: 0.4848 - val_accuracy: 0.7508 - val_loss: 0.5116
+# Epoch 25/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 7s 23ms/step - accuracy: 0.7789 - loss: 0.4877 - val_accuracy: 0.7520 - val_loss: 0.5152
+# Epoch 26/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 9s 29ms/step - accuracy: 0.7712 - loss: 0.4878 - val_accuracy: 0.7558 - val_loss: 0.5106
+# Epoch 27/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 8s 24ms/step - accuracy: 0.7691 - loss: 0.4903 - val_accuracy: 0.7480 - val_loss: 0.5189
+# Epoch 28/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 10s 24ms/step - accuracy: 0.7730 - loss: 0.4862 - val_accuracy: 0.7536 - val_loss: 0.5108
+# Epoch 29/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 9s 30ms/step - accuracy: 0.7746 - loss: 0.4817 - val_accuracy: 0.7550 - val_loss: 0.5112
