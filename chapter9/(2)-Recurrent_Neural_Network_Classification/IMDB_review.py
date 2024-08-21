@@ -496,3 +496,17 @@ history = model2.fit(
 # 313/313 ━━━━━━━━━━━━━━━━━━━━ 10s 24ms/step - accuracy: 0.7730 - loss: 0.4862 - val_accuracy: 0.7536 - val_loss: 0.5108
 # Epoch 29/100
 # 313/313 ━━━━━━━━━━━━━━━━━━━━ 9s 30ms/step - accuracy: 0.7746 - loss: 0.4817 - val_accuracy: 0.7550 - val_loss: 0.5112
+
+# 원-핫 인코딩을 사용한 모델과 비슷한 성능을 냈다
+# 반면에 순환층의 가중치 개수는 훨씬 작고 훈련 세트 크기도 훨씬 줄어들었다
+
+# 훈련 손실과 검증 손실 그래프 출력
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['train', 'val'])
+plt.show()
+
+# 검증 손실이 더 감소되지 않아 훈련이 적절히 조기 종료되었다
+# 이에 비해 훈련 손실은 계속 삼소한다
