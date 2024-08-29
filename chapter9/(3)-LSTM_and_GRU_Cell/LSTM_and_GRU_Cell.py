@@ -319,3 +319,111 @@ model3.add(keras.layers.Dense(1, activation='sigmoid'))
 
 # 모델 구조 출력
 model3.summary()
+# Model: "sequential_6"
+# ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+# ┃ Layer (type)                         ┃ Output Shape                ┃         Param # ┃
+# ┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+# │ embedding_6 (Embedding)              │ ?                           │     0 (unbuilt) │
+# ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+# │ lstm_6 (LSTM)                        │ ?                           │     0 (unbuilt) │
+# ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+# │ lstm_7 (LSTM)                        │ ?                           │     0 (unbuilt) │
+# ├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+# │ dense_6 (Dense)                      │ ?                           │     0 (unbuilt) │
+# └──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+#  Total params: 0 (0.00 B)
+#  Trainable params: 0 (0.00 B)
+#  Non-trainable params: 0 (0.00 B)
+
+# 모델 훈련
+rmsprop = keras.optimizers.RMSprop(learning_rate=1e-4)
+model3.compile(optimizer=rmsprop, loss='binary_crossentropy', metrics=['accuracy'])
+checkpoint_cb = keras.callbacks.ModelCheckpoint('best-2rnn-model.keras', save_best_only=True)
+early_stopping_cb = keras.callbacks.EarlyStopping(patience=3, restore_best_weights=True)
+history = model3.fit(train_seq, train_target, 
+    epochs=100, batch_size=64,
+    validation_data=(val_seq, val_target),
+    callbacks=[checkpoint_cb, early_stopping_cb])
+
+# Epoch 1/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 30s 82ms/step - accuracy: 0.4983 - loss: 0.6931 - val_accuracy: 0.5536 - val_loss: 0.6928
+# Epoch 2/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 25s 80ms/step - accuracy: 0.5319 - loss: 0.6926 - val_accuracy: 0.5966 - val_loss: 0.6918
+# Epoch 3/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 41s 79ms/step - accuracy: 0.5722 - loss: 0.6909 - val_accuracy: 0.6436 - val_loss: 0.6861
+# Epoch 4/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 25s 80ms/step - accuracy: 0.6152 - loss: 0.6793 - val_accuracy: 0.6876 - val_loss: 0.6296
+# Epoch 5/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 41s 79ms/step - accuracy: 0.6751 - loss: 0.6216 - val_accuracy: 0.7144 - val_loss: 0.5763
+# Epoch 6/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 25s 80ms/step - accuracy: 0.7189 - loss: 0.5703 - val_accuracy: 0.7296 - val_loss: 0.5498
+# Epoch 7/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 25s 80ms/step - accuracy: 0.7318 - loss: 0.5478 - val_accuracy: 0.7482 - val_loss: 0.5245
+# Epoch 8/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 24s 76ms/step - accuracy: 0.7507 - loss: 0.5261 - val_accuracy: 0.7650 - val_loss: 0.5089
+# Epoch 9/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 42s 78ms/step - accuracy: 0.7647 - loss: 0.5094 - val_accuracy: 0.7702 - val_loss: 0.4989
+# Epoch 10/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 41s 79ms/step - accuracy: 0.7744 - loss: 0.4970 - val_accuracy: 0.7738 - val_loss: 0.4912
+# Epoch 11/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 41s 79ms/step - accuracy: 0.7799 - loss: 0.4846 - val_accuracy: 0.7744 - val_loss: 0.4846
+# Epoch 12/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 25s 80ms/step - accuracy: 0.7823 - loss: 0.4802 - val_accuracy: 0.7830 - val_loss: 0.4757
+# Epoch 13/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 41s 79ms/step - accuracy: 0.7853 - loss: 0.4777 - val_accuracy: 0.7846 - val_loss: 0.4731
+# Epoch 14/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 41s 79ms/step - accuracy: 0.7880 - loss: 0.4710 - val_accuracy: 0.7834 - val_loss: 0.4680
+# Epoch 15/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 25s 78ms/step - accuracy: 0.7919 - loss: 0.4668 - val_accuracy: 0.7846 - val_loss: 0.4660
+# Epoch 16/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 24s 78ms/step - accuracy: 0.7890 - loss: 0.4653 - val_accuracy: 0.7756 - val_loss: 0.4739
+# Epoch 17/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 24s 78ms/step - accuracy: 0.8004 - loss: 0.4495 - val_accuracy: 0.7608 - val_loss: 0.4989
+# Epoch 18/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 41s 78ms/step - accuracy: 0.7910 - loss: 0.4608 - val_accuracy: 0.7876 - val_loss: 0.4609
+# Epoch 19/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 41s 79ms/step - accuracy: 0.7938 - loss: 0.4602 - val_accuracy: 0.7902 - val_loss: 0.4614
+# Epoch 20/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 41s 78ms/step - accuracy: 0.7984 - loss: 0.4499 - val_accuracy: 0.7838 - val_loss: 0.4561
+# Epoch 21/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 41s 77ms/step - accuracy: 0.7995 - loss: 0.4497 - val_accuracy: 0.7918 - val_loss: 0.4527
+# Epoch 22/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 40s 74ms/step - accuracy: 0.7998 - loss: 0.4453 - val_accuracy: 0.7932 - val_loss: 0.4483
+# Epoch 23/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 42s 79ms/step - accuracy: 0.7953 - loss: 0.4507 - val_accuracy: 0.7890 - val_loss: 0.4590
+# Epoch 24/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 41s 78ms/step - accuracy: 0.8064 - loss: 0.4380 - val_accuracy: 0.7950 - val_loss: 0.4490
+# Epoch 25/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 24s 77ms/step - accuracy: 0.8052 - loss: 0.4446 - val_accuracy: 0.7854 - val_loss: 0.4612
+
+# 일반적으로 순환층을 쌓으면 성능이 높아진다
+# 이 예에서는 그리 큰 효과를 내지 못했다
+
+# 손실 그래프 출력
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['train', 'val'])
+plt.show(0)
+
+# 그래프를 보면 과대적합을 제어하면서 손실을 최대한 낮췄다
+
+# GRU 구조
+# GRU (Gated Recurrent Unit)의 약자
+# LSTM을 간소화한 버전으로 생각할 수 있다
+# 이 셀은 LSTM처럼 셀 상태를 계산하지 않고 은닉 상태 하나만 포함하고 있다
+
+# GRU 셀에는 은닉 상태와 입력에 가중치를 곱하고 절편을 더하는 작은 셀이 3개 들어있다
+# 2개는 시그모이드 활성화 함수를 사용하고 하나는 tanh 활성화 함수를 사용
+
+# GRU셀은 LSTM보다 가중치가 적기 때문에 계산량이 적지만 LSTM 못지않은 좋은 성능을 낸다
+
+# GRU 신경망 생성
+model4 = keras.Sequential()
+model4.add(keras.layers.Embedding(500, 16, input_length=100))
+model4.add(keras.layers.GRU(8))
+model4.add(keras.layers.Dense(1, activation='sigmoid'))
+
+# 모델 구조 출력
+model4.summary()
