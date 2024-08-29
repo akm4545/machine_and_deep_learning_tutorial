@@ -180,3 +180,44 @@ history = model.fit(train_seq, train_target,
 # 313/313 ━━━━━━━━━━━━━━━━━━━━ 14s 43ms/step - accuracy: 0.8164 - loss: 0.4008 - val_accuracy: 0.8012 - val_loss: 0.4290
 # Epoch 42/100
 # 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 43ms/step - accuracy: 0.8195 - loss: 0.4040 - val_accuracy: 0.8030 - val_loss: 0.4319    
+
+# 훈련 손실과 검증 손실 그래프 출력
+import matplotlib.pyplot as plt
+
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['train', 'val'])
+plt.show()
+
+# 그래프를 보면 기본 순환층보다 LSTM이 과대적합을 억제하면서 훈련을 잘 수행한 것으로 보인다
+# 경우에 따라서는 과대적합을 더 강하게 제어할 필요가 있다
+
+# 완전 연결 신경망과 합성곱 신경망에서는 Dropout 클래스를 사용해 드롭아웃을 적용했다
+# 이를 통해 모델이 훈련 세트에 너무 과대적합되는 것을 막았다
+# 순환층은 자체적으로 드롭아웃 기능을 제공한다
+# SimpleRNN과 LSTM 클래스 모두 dropout 매개변수와 recurrent_dropout 매개변수를 가지고 있다
+
+# dropout 매개변수는 셀의 입력에 드롭아웃을 적용하고 recurrent_dropout은 순환되는 은닉 상태에
+# 드롭아웃을 적용한다
+
+# 하지만 기술적인 문제로 인해 recurrent_dropout을 사용하면 GPU를 사용하여 모델을 훈련하지 못한다
+# 이 때문에 모델의 훈련 속도가 크게 느려진다
+
+# dropout만을 사용한 LSTM 클래스
+# dropout 매개변수를 0.3으로 지정하여 30%의 입력을 드롭아웃
+model2 = keras.Sequential()
+model2.add(keras.layers.Embedding(500, 16, input_length=100))
+model2.add(keras.layers.LSTM(8, dropout=0.3))
+model2.add(keras.layers.Dense(1, activation='sigmoid'))
+
+# 훈련
+rmsprop = keras.optimizers.RMSprop(learning_rate=1e-4)
+model2.compile(optimizer=rmsprop, loss='binary_crossentropy', metrics=['accuracy'])
+checkpoint_cb = keras.callbacks.ModelCheckpoint('best-dropout-model.keras', save_best_only=True)
+early_stopping_cb = keras.callbacks.EarlyStopping(patience=3, restore_best_weights=True)
+history = model2.fit(train_seq, train_target, 
+    epochs=100, batch_size=64, 
+    validation_data=(val_seq, val_target),
+    callbacks=[checkpoint_cb, early_stopping_cb])
