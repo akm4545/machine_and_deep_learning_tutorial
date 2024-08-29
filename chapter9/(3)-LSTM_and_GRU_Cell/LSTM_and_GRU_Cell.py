@@ -221,3 +221,101 @@ history = model2.fit(train_seq, train_target,
     epochs=100, batch_size=64, 
     validation_data=(val_seq, val_target),
     callbacks=[checkpoint_cb, early_stopping_cb])
+# Epoch 1/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 15s 41ms/step - accuracy: 0.5000 - loss: 0.6931 - val_accuracy: 0.5284 - val_loss: 0.6926
+# Epoch 2/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 13s 40ms/step - accuracy: 0.5322 - loss: 0.6922 - val_accuracy: 0.6206 - val_loss: 0.6910
+# Epoch 3/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 38ms/step - accuracy: 0.5998 - loss: 0.6900 - val_accuracy: 0.6654 - val_loss: 0.6860
+# Epoch 4/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 21s 40ms/step - accuracy: 0.6404 - loss: 0.6800 - val_accuracy: 0.6962 - val_loss: 0.6397
+# Epoch 5/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 12s 40ms/step - accuracy: 0.6822 - loss: 0.6322 - val_accuracy: 0.7122 - val_loss: 0.6103
+# Epoch 6/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 21s 40ms/step - accuracy: 0.7074 - loss: 0.6040 - val_accuracy: 0.7332 - val_loss: 0.5894
+# Epoch 7/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 12s 39ms/step - accuracy: 0.7301 - loss: 0.5844 - val_accuracy: 0.7394 - val_loss: 0.5700
+# Epoch 8/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 12s 37ms/step - accuracy: 0.7450 - loss: 0.5624 - val_accuracy: 0.7594 - val_loss: 0.5514
+# Epoch 9/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 21s 40ms/step - accuracy: 0.7585 - loss: 0.5464 - val_accuracy: 0.7732 - val_loss: 0.5337
+# Epoch 10/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 40ms/step - accuracy: 0.7619 - loss: 0.5314 - val_accuracy: 0.7688 - val_loss: 0.5175
+# Epoch 11/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 13s 41ms/step - accuracy: 0.7705 - loss: 0.5150 - val_accuracy: 0.7814 - val_loss: 0.5021
+# Epoch 12/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 40ms/step - accuracy: 0.7830 - loss: 0.4993 - val_accuracy: 0.7888 - val_loss: 0.4883
+# Epoch 13/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 21s 40ms/step - accuracy: 0.7885 - loss: 0.4828 - val_accuracy: 0.7868 - val_loss: 0.4810
+# Epoch 14/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 13s 40ms/step - accuracy: 0.7906 - loss: 0.4755 - val_accuracy: 0.7890 - val_loss: 0.4713
+# Epoch 15/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 40ms/step - accuracy: 0.7876 - loss: 0.4741 - val_accuracy: 0.7910 - val_loss: 0.4676
+# Epoch 16/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 40ms/step - accuracy: 0.7961 - loss: 0.4621 - val_accuracy: 0.7922 - val_loss: 0.4595
+# Epoch 17/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 38ms/step - accuracy: 0.7976 - loss: 0.4602 - val_accuracy: 0.7938 - val_loss: 0.4594
+# Epoch 18/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 12s 37ms/step - accuracy: 0.8009 - loss: 0.4515 - val_accuracy: 0.7940 - val_loss: 0.4537
+# Epoch 19/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 22s 41ms/step - accuracy: 0.8017 - loss: 0.4474 - val_accuracy: 0.7940 - val_loss: 0.4505
+# Epoch 20/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 13s 40ms/step - accuracy: 0.8009 - loss: 0.4469 - val_accuracy: 0.7940 - val_loss: 0.4481
+# Epoch 21/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 13s 40ms/step - accuracy: 0.8056 - loss: 0.4365 - val_accuracy: 0.8010 - val_loss: 0.4459
+# Epoch 22/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 21s 40ms/step - accuracy: 0.8021 - loss: 0.4398 - val_accuracy: 0.7960 - val_loss: 0.4446
+# Epoch 23/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 11s 37ms/step - accuracy: 0.8155 - loss: 0.4269 - val_accuracy: 0.7912 - val_loss: 0.4465
+# Epoch 24/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 22s 41ms/step - accuracy: 0.8050 - loss: 0.4328 - val_accuracy: 0.7990 - val_loss: 0.4421
+# Epoch 25/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 41ms/step - accuracy: 0.8007 - loss: 0.4365 - val_accuracy: 0.8014 - val_loss: 0.4400
+# Epoch 26/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 13s 41ms/step - accuracy: 0.8040 - loss: 0.4355 - val_accuracy: 0.8002 - val_loss: 0.4442
+# Epoch 27/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 21s 41ms/step - accuracy: 0.8055 - loss: 0.4307 - val_accuracy: 0.8006 - val_loss: 0.4381
+# Epoch 28/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 40ms/step - accuracy: 0.8033 - loss: 0.4375 - val_accuracy: 0.7902 - val_loss: 0.4446
+# Epoch 29/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 13s 41ms/step - accuracy: 0.8115 - loss: 0.4256 - val_accuracy: 0.7992 - val_loss: 0.4380
+# Epoch 30/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 41ms/step - accuracy: 0.8088 - loss: 0.4235 - val_accuracy: 0.8016 - val_loss: 0.4362
+# Epoch 31/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 21s 41ms/step - accuracy: 0.8106 - loss: 0.4228 - val_accuracy: 0.7960 - val_loss: 0.4376
+# Epoch 32/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 13s 41ms/step - accuracy: 0.8106 - loss: 0.4211 - val_accuracy: 0.7992 - val_loss: 0.4371
+# Epoch 33/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 41ms/step - accuracy: 0.8129 - loss: 0.4193 - val_accuracy: 0.8012 - val_loss: 0.4398
+
+# 검증 손실이 약간 향상되었다
+
+# 훈련 손실과 검증 손실 그래프 출력
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['train', 'val'])
+plt.show()
+
+# 훈련 손실과 검증 손실 간의 차이가 좁혀졌다
+
+# 밀집층이나 합성곱 층처럼 순환층도 여러 개를 쌓지 않을 이유가 없다
+# 순환층을 연결할 때는 한 가지 주의점이 있는데 순환층의 은닉 상태는 샘플의 마지막 타임스텝에 대한 은닉
+# 상태만 다음 층으로 전달한다
+# 하지만 순환층을 쌓게 되면 모든 순환층에 순차 데이터가 필요하다
+# 따라서 앞쪽의 순환층이 모든 타임스텝에 대한 은닉 상태를 출력해야 한다
+# 오직 마지막 순환층만 마지막 타임스텝의 은닉 상태를 출력해야 한다
+
+# 케라스의 순환층에서 모든 타임스텝의 은닉 상태를 출력하려면 마지막을 제외한
+# 다른 모든 순환층에서 return_sequences 매개변수를 True로 지정하면 된다
+
+# 2개의 LSTM 층을 쌓았고 모두 드롭아웃을 0.3으로 지정
+model3 = keras.Sequential()
+model3.add(keras.layers.Embedding(500, 16, input_length=100))
+model3.add(keras.layers.LSTM(8, dropout=0.3, return_sequences=True))
+model3.add(keras.layers.LSTM(8, dropout=0.3))
+model3.add(keras.layers.Dense(1, activation='sigmoid'))
+
+# 모델 구조 출력
+model3.summary()
