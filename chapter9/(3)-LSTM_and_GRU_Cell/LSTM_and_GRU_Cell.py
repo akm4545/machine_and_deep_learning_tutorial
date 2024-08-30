@@ -440,3 +440,26 @@ model4.summary()
 #  Total params: 0 (0.00 B)
 #  Trainable params: 0 (0.00 B)
 #  Non-trainable params: 0 (0.00 B)
+
+# GRU 셀에는 3개의 작은 셀이 있다
+# 작은 셀에는 입력과 은닉 상태에 곱하는 가중치와 절편이 있다
+# 입력에 곱하는 가중치는 16 * 8 = 128r개이고 은닉 상태에 곱하는 가중치는 8 * 8 = 64개이다
+# 그리고 절편은 뉴런마다 하나씩이므로 8개이다
+# 모두 더하면 128 + 64 + 8 = 200개이다 
+# 이런 작은 셀이 3개이므로 모두 600개의 모델 파라미터가 필요하다
+# 하지만 summary 메서드의 출력은 624개이다
+
+# 은닉 상태가 먼저 가중치와 곱해진 다음 셀의 출력과 곱해진다
+# 이렇게 나누어 계산하면 은닉 상태에 곱해지는 가중치 외에 절편이 별도로 필요하다
+# 따라서 작은 셀마다 하나씩 절편이 추가되고 8개의 뉴런이 있으므로 총 24개의 모델 파라미터가 더해진다
+
+# 텐서플로가 이런 계산 방식을 사용하는 이유는 GPU를 잘 활용하기 위해서다
+
+# GRU 셀을 사용한 순환 신경망 훈련
+rmsprop = keras.optimizers.RMSprop(learning_rate=1e-4)
+model4.compile(optimizer=rmsporp, loss='binary_crossentropy', metrics=['accuracy'])
+checkpoint_cb = keras.callbacks.ModelCheckpoint('best-gru-model.keras', save_best_only=True)
+early_stopping_cb = keras.callbacks.EarlyStopping(patience=3, restore_best_weights=True)
+history = model4.fit(train_seq, train_target, epochs=100, batch_size=64,
+    validation_data=(val_seq, val_target),
+    callbacks=[checkpoint_cb, early_stopping_cb])
