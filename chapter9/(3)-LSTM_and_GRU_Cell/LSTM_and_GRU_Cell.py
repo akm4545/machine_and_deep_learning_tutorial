@@ -463,3 +463,80 @@ early_stopping_cb = keras.callbacks.EarlyStopping(patience=3, restore_best_weigh
 history = model4.fit(train_seq, train_target, epochs=100, batch_size=64,
     validation_data=(val_seq, val_target),
     callbacks=[checkpoint_cb, early_stopping_cb])
+# Epoch 1/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 55ms/step - accuracy: 0.5266 - loss: 0.6922 - val_accuracy: 0.5688 - val_loss: 0.6906
+# Epoch 2/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 18s 59ms/step - accuracy: 0.5626 - loss: 0.6901 - val_accuracy: 0.5940 - val_loss: 0.6875
+# Epoch 3/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 19s 55ms/step - accuracy: 0.5856 - loss: 0.6862 - val_accuracy: 0.6032 - val_loss: 0.6823
+# Epoch 4/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 21s 57ms/step - accuracy: 0.6046 - loss: 0.6799 - val_accuracy: 0.6146 - val_loss: 0.6742
+# Epoch 5/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 18s 57ms/step - accuracy: 0.6286 - loss: 0.6693 - val_accuracy: 0.6290 - val_loss: 0.6621
+# Epoch 6/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 17s 56ms/step - accuracy: 0.6390 - loss: 0.6563 - val_accuracy: 0.6424 - val_loss: 0.6431
+# Epoch 7/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 21s 58ms/step - accuracy: 0.6664 - loss: 0.6301 - val_accuracy: 0.6746 - val_loss: 0.6128
+# Epoch 8/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 56ms/step - accuracy: 0.6966 - loss: 0.5929 - val_accuracy: 0.7248 - val_loss: 0.5540
+# Epoch 9/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 17s 56ms/step - accuracy: 0.7411 - loss: 0.5320 - val_accuracy: 0.7496 - val_loss: 0.5137
+# Epoch 10/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 55ms/step - accuracy: 0.7613 - loss: 0.4965 - val_accuracy: 0.7592 - val_loss: 0.4992
+# Epoch 11/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 55ms/step - accuracy: 0.7714 - loss: 0.4866 - val_accuracy: 0.7766 - val_loss: 0.4842
+# Epoch 12/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 54ms/step - accuracy: 0.7847 - loss: 0.4654 - val_accuracy: 0.7700 - val_loss: 0.4800
+# Epoch 13/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 17s 55ms/step - accuracy: 0.7958 - loss: 0.4539 - val_accuracy: 0.7892 - val_loss: 0.4662
+# Epoch 14/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 22s 59ms/step - accuracy: 0.7939 - loss: 0.4525 - val_accuracy: 0.7864 - val_loss: 0.4598
+# Epoch 15/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 17s 54ms/step - accuracy: 0.7964 - loss: 0.4431 - val_accuracy: 0.7858 - val_loss: 0.4578
+# Epoch 16/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 17s 54ms/step - accuracy: 0.8005 - loss: 0.4392 - val_accuracy: 0.7850 - val_loss: 0.4612
+# Epoch 17/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 21s 57ms/step - accuracy: 0.8088 - loss: 0.4297 - val_accuracy: 0.7928 - val_loss: 0.4517
+# Epoch 18/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 17s 54ms/step - accuracy: 0.8024 - loss: 0.4320 - val_accuracy: 0.7916 - val_loss: 0.4512
+# Epoch 19/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 17s 54ms/step - accuracy: 0.8105 - loss: 0.4281 - val_accuracy: 0.7906 - val_loss: 0.4505
+# Epoch 20/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 22s 58ms/step - accuracy: 0.8112 - loss: 0.4249 - val_accuracy: 0.7866 - val_loss: 0.4602
+# Epoch 21/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 20s 56ms/step - accuracy: 0.8082 - loss: 0.4273 - val_accuracy: 0.7934 - val_loss: 0.4491
+# Epoch 22/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 22s 62ms/step - accuracy: 0.8090 - loss: 0.4225 - val_accuracy: 0.7924 - val_loss: 0.4448
+# Epoch 23/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 19s 56ms/step - accuracy: 0.8069 - loss: 0.4280 - val_accuracy: 0.7920 - val_loss: 0.4473
+# Epoch 24/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 17s 56ms/step - accuracy: 0.8107 - loss: 0.4244 - val_accuracy: 0.7904 - val_loss: 0.4516
+# Epoch 25/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 19s 60ms/step - accuracy: 0.8138 - loss: 0.4198 - val_accuracy: 0.7962 - val_loss: 0.4431
+# Epoch 26/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 19s 56ms/step - accuracy: 0.8143 - loss: 0.4207 - val_accuracy: 0.7948 - val_loss: 0.4444
+# Epoch 27/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 22s 60ms/step - accuracy: 0.8062 - loss: 0.4240 - val_accuracy: 0.7954 - val_loss: 0.4441
+# Epoch 28/100
+# 313/313 ━━━━━━━━━━━━━━━━━━━━ 19s 56ms/step - accuracy: 0.8088 - loss: 0.4209 - val_accuracy: 0.7960 - val_loss: 0.4433
+
+# LSTM과 거의 비슷한 성능을 낸다
+
+# 모델의 손실을 그래프로 출력
+plt.plot(history.history['loss'])
+plt.plot(history.history['val_loss'])
+plt.xlabel('epoch')
+plt.ylabel('loss')
+plt.legend(['train', 'val'])
+plt.show()
+
+# 드롭아웃을 사용하지 않았기 때문에 이전보다 훈련 손실과 검증 손실 차이에 차이가 있지만
+# 훈련 과정이 잘 수렴되고 있다
+
+# 가장 좋았던 2개의 순환층을 쌓은 모델을 다시 로드하여 테스트 세트에 대한 성능 확인
+# 테스트 세트를 훈련 세트와 동일한 방식으로 변환
+# 그 다음 load_model() 함수를 사용하여 best-2rnn-model.keras 파일을 읽고
+# evaluate() 메서드로 테스트 세트에서 성능을 계산
+test_seq = pad_sequences(test_input, maxlen=100)
+rnn_model = keras.models.load_model('best-2rnn-model.keras')
+rnn_model.evaluate(test_seq, test_target)
